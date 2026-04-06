@@ -199,15 +199,17 @@ class AssignmentPDFGenerator(BasePDFGenerator):
         """Dibuja el header reduciendo el espacio consumido."""
         canvas.saveState()
         if not hasattr(self, '_cached_header_elements'):
-            institucion = "MINISTERIO DEL PODER POPULAR PARA RELACIONES INTERIORES, JUSTICIA Y PAZ"
+            institucion = "Comisión Nacional de Telecomunicaciones "
+            institucion2 = "(CONATEL) "
             filtros = self.metadata.get('filters', {})
             filtro_id = filtros.get('nomina_id', None)
             nombre_filtro = self._get_nomina_nombre(filtro_id) if filtro_id else None
             titulo = f"LISTADO DE {nombre_filtro.upper()}" if nombre_filtro else "REPORTE DE CARGOS"
 
-            titulo_reporte = f"<font size='10'><b>{institucion}</b></font><br/><font size='12'><b>{titulo}</b></font>"
+            titulo_reporte = f"<font size='12'><b>{institucion} <br/> {institucion2}</b></font><br/><font size='14'><b><br/>{titulo}</b></font>"
             self._cached_header_elements = create_header(titulo_reporte, width=doc.width)
-
+         
+            
         y_offset = doc.pagesize[1] - self.page_config['topMargin'] + 5*mm
         for el in self._cached_header_elements:
             w, h = el.wrap(doc.width, doc.topMargin)

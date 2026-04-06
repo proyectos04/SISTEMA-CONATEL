@@ -424,8 +424,8 @@ class FamilyPDFGenerator(BasePDFGenerator):
         canvas.saveState()
 
         if not hasattr(self, '_cached_header_elements'):
-            institucion = "MINISTERIO DEL PODER POPULAR PARA RELACIONES INTERIORES, "
-            institucion2 = "JUSTICIA Y PAZ"
+            institucion = "Comisión Nacional de Telecomunicaciones "
+            institucion2 = "(CONATEL) "
 
             # Determinar el título principal basado en el filtro
             filtros = self.metadata.get('filters', {})

@@ -62,14 +62,14 @@ def create_header(title, subtitle=None, width=None):
     if not width:
         width = 160 * mm 
 
-    logo_left_path = get_logo_path('logoNuevo.png')
-    logo_right_path = get_logo_path('juntosPorVida.png')
+    logo_left_path = get_logo_path('logo01.png')
+    logo_right_path = get_logo_path('logo02.png')
 
     header_data = []
     
     if logo_left_path:
         try:
-            logo_left = Image(logo_left_path, width=30*mm, height=15*mm, mask='auto')
+            logo_left = Image(logo_left_path, width=50*mm, height=25*mm, mask='auto')
             header_data.append(logo_left)
         except Exception:
             header_data.append('')
@@ -81,7 +81,7 @@ def create_header(title, subtitle=None, width=None):
     
     if logo_right_path:
         try:
-            logo_right = Image(logo_right_path, width=35*mm, height=15*mm, mask='auto')
+            logo_right = Image(logo_right_path, width=33*mm, height=15*mm, mask='auto')
             header_data.append(logo_right)
         except Exception:
             header_data.append('')

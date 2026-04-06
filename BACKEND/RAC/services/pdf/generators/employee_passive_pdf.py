@@ -42,8 +42,8 @@ class EmployeePassivePDFGenerator(BasePDFGenerator):
     def _draw_header(self, canvas, doc):
         canvas.saveState()
         if not hasattr(self, '_cached_header_elements'):
-            institucion = "MINISTERIO DEL PODER POPULAR PARA RELACIONES INTERIORES, "
-            institucion2 = "JUSTICIA Y PAZ"
+            institucion = "Comisión Nacional de Telecomunicaciones "
+            institucion2 = "(CONATEL) "
             filtros = self.metadata.get('filters', {})
             filtro_aplicado_id = filtros.get('nomina_id', None)
             filtro_aplicado_nombre = self._get_nomina_nombre(filtro_aplicado_id) if filtro_aplicado_id else None
