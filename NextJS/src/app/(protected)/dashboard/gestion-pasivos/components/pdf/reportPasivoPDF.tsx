@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 20,
   },
-  logoLeft: {
-    width: 100,
-    height: 60,
+ logoLeft: {
+    width: 210,
+    height: 90,
   },
   logoRight: {
     width: 100,
