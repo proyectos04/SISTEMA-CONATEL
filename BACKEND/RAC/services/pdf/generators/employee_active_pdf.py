@@ -162,35 +162,15 @@ class EmployeePDFGenerator(BasePDFGenerator):
                                 titulos_bloque.extend(create_section_title(f"    - DL / COORD: {dl_nom}"))
                             if coord_nom.upper().strip() not in ignorar:
                                 titulos_bloque.extend(create_section_title(f"      * COORD: {coord_nom}"))
-
-
-                       
-                            # Asegurar que los títulos no queden solos
-                            # for p in titulos_bloque:
-                                # if isinstance(p, Paragraph): p.keepWithNext = True
-  
-                            # --- SOLUCIÓN: SEGMENTACIÓN SIN DUPLICAR HEADERS ---
-                            # Si la tabla es extensa, creamos una sola tabla para que ReportLab 
-                            # maneje el flujo y la repetición de encabezados internamente.
-                            
-                            
-                            
-                            # Si hay más de 5 filas, atamos los títulos con las primeras 5
-                            # pero enviamos la tabla COMPLETA para que no se duplique el header.
                             
                             tabla_completa = create_data_table(headers, rows, col_widths, with_alternating_rows=True)
                            
                             espacio_requerido = (len(titulos_bloque) * 6 * mm) + 25 * mm
                             elements.append(CondPageBreak(espacio_requerido))
-    # 3. Añadimos los elementos de forma natural
+
                             elements.extend(titulos_bloque)
                             elements.append(Spacer(1, 2*mm))
                             elements.append(tabla_completa)
-                                                 
-                                # KeepTogether solo con los títulos y un espacio para asegurar que 
-                                # la tabla comience inmediatamente después sin saltar de página.
-                         
-                                
 
                             elements.append(Spacer(1, 6 * mm))
                             impreso_dep, impreso_dg, impreso_dl = dep_nom, dg_nom, dl_nom
