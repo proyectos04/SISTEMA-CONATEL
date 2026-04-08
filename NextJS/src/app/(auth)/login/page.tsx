@@ -4,6 +4,7 @@ import { LoginForm } from "@/components/login-form";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 export default function LoginPage() {
   return (
@@ -13,13 +14,7 @@ export default function LoginPage() {
           <Link
             href="/login"
             className="flex  justify-center md:justify-center items-center gap-2 font-medium text-white w-[80%]"
-          >
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
-            </div>
-            Ministerio del Poder Popular para Relaciones Interiores, Justicia y
-            Paz
-          </Link>
+          ></Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
@@ -27,13 +22,13 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
+      <div className="bg-muted relative hidden lg:block rounded-2xl">
         <Image
           height={2000}
           width={2000}
-          src="/image (2).png"
+          src="/logoLogin.png"
           alt="Image"
-          className="absolute inset-0 h-full w-full  dark:brightness-[0.2] dark:grayscale"
+          className="rounded-br-lg rounded-tr-lg absolute inset-0 h-full w-full  dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </Card>

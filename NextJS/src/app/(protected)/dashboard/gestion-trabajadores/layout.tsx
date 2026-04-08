@@ -15,8 +15,8 @@ export default function ProtectedLayout({
       <AppSidebarEmployees />
       <SidebarInset className="bg-transparent">
         <HeaderLayout
-          title="Gestión de Trabajadores - RAC"
-          subtitle="Gestiona y Visualiza la Información de los Trabajadores MPPRIJP"
+          title="Sistema Automatizado De Gestión De Personal - SAGP"
+          subtitle="Gestiona y Visualiza la Información de los Trabajadores en Conatel"
         >
           <SidebarTrigger className="text-black-600   scale-110" />
         </HeaderLayout>

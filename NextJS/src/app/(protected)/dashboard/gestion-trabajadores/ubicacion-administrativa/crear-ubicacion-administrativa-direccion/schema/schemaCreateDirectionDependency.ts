@@ -9,8 +9,8 @@ export const schemaCreateDirectionGeneralDp = z.object({
     })
     .trim()
 
-    .min(12, {
-      message: "Minimo 12 Caracteres",
+    .min(6, {
+      message: "Minimo 6 Caracteres",
     }),
   direccion_general: z
     .string({
@@ -28,8 +28,8 @@ export const schemaCreateDirectionLineDirection = z.object({
       message: "Datos Incorrecos",
       required_error: "Datos Invalidos",
     })
-    .min(12, {
-      message: "Minimo 12 Caracteres",
+    .min(6, {
+      message: "Minimo 6 Caracteres",
     }),
   direccion_linea: z
     .string({
@@ -47,8 +47,8 @@ export const schemaCreateCoordinationDirection = z.object({
       message: "Datos Incorrecos",
       required_error: "Datos Invalidos",
     })
-    .min(12, {
-      message: "Minimo 12 Caracteres",
+    .min(6, {
+      message: "Minimo 6 Caracteres",
     }),
   coordinacion: z
     .string({

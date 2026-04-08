@@ -43,7 +43,7 @@ export default function Dashboard() {
 
   const handleDepartmentValidation = (
     departmentId: string,
-    departmentHref: string,
+    departmentHref: string
   ) => {
     if (session?.user?.department.nombre_departamento == departmentId) {
       toast.success(`Bienvenido ${session.user.name}`, {
@@ -62,7 +62,6 @@ export default function Dashboard() {
   };
   return (
     <>
-      {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
       <div className="flex flex-col items-center mb-10 mt-4">
         <h1 className="text-3xl font-bold mb-2 text-white text-center">
           Sistema de Información Integral
@@ -72,7 +71,7 @@ export default function Dashboard() {
         </p>
         <SignOut />
       </div>
-      <div className="grid overflow-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-8 ">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-8 ">
         {departments.map((department, index) => {
           const hasAccess =
             session?.user?.department.nombre_departamento === department.id;
