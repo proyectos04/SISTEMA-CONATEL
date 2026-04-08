@@ -26,11 +26,11 @@ import {
   getDirectionGeneralById,
   getDirectionLine,
 } from "../../api/getInfoRac";
-import upgradeDirectionGeneralCoordAction from "../../dependencias/actualizar-dependencia/actions/upgradeDirectionGeneralCoord";
+import upgradeDirectionGeneralCoordAction from "../../ubicacion-administrativa/actualizar-ubicacion/actions/upgradeDirectionGeneralCoord";
 import {
   SchemaUpgradeDireccionGeneralCoord,
   schemaUpgradeDireccionGeneralCoord,
-} from "../../dependencias/actualizar-dependencia/schema/schemaUpdateDireccionGeneralCoord";
+} from "../../ubicacion-administrativa/actualizar-ubicacion/schema/schemaUpdateDireccionGeneralCoord";
 import Loading from "../loading/loading";
 
 export default function UpdateDireccionGeneralCoordin() {
@@ -40,11 +40,11 @@ export default function UpdateDireccionGeneralCoordin() {
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
 
   const form = useForm<SchemaUpgradeDireccionGeneralCoord>({
@@ -79,7 +79,7 @@ export default function UpdateDireccionGeneralCoordin() {
               name="dependenciaId"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Dependencia</FormLabel>
+                  <FormLabel>Organización</FormLabel>
                   <Select
                     onValueChange={(values) => {
                       field.onChange(Number.parseInt(values));
@@ -89,7 +89,11 @@ export default function UpdateDireccionGeneralCoordin() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                          placeholder={`${
+                            isLoadingDependency
+                              ? "Cargando Organización"
+                              : "Seleccione una Organización"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -110,9 +114,7 @@ export default function UpdateDireccionGeneralCoordin() {
               name="id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Dirección General / Coordinación Adscrita
-                  </FormLabel>
+                  <FormLabel>Dirección / Gerencia / Oficina</FormLabel>
                   <Select
                     onValueChange={(values) => {
                       field.onChange(Number.parseInt(values));
@@ -121,7 +123,11 @@ export default function UpdateDireccionGeneralCoordin() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                          placeholder={`${
+                            isLoadingDirectionGeneral
+                              ? "Cargando Direcciones Generales"
+                              : "Seleccione una Dirección General"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -146,7 +152,7 @@ export default function UpdateDireccionGeneralCoordin() {
             />
             <InputForm
               form={form}
-              label="Nuevo nombre de la Dirección General / Coordinación Adscrita"
+              label="Nuevo nombre de la Dirección / Gerencia / Oficina"
               nameInput="direccion_general"
               type="text"
               placeholder="Ej. Dirección General....."

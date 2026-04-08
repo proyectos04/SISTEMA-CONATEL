@@ -31,7 +31,7 @@ export default function RootLayout({
         className={` antialiased  bg-no-repeat  bg-[url('/bg.png')] backdrop-blur-[8px] bg-cover object-center overflow-hidden  h-full`}
       >
         <SessionProvider>
-          <AuthController />
+          {/* <AuthController /> */}
           <ScrollArea className="h-full w-full rounded-md">
             {children}
           </ScrollArea>

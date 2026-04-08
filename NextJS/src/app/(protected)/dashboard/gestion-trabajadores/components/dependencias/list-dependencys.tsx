@@ -26,34 +26,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
-import Error from "../error/error";
 export default function TableDependencys() {
   const [dependencyId, setDependencyId] = useState<number | string>("");
   const [directionGeneralId, setDirectionGeneralId] = useState<string | null>(
-    null,
+    null
   );
   const [coordinationId, setCoordinationId] = useState<string | null>(null);
 
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? [`directionGeneral.${dependencyId}`, dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
-  const coordinationGeneral = useMemo(() => {
-    if (!directionGeneral?.data) return [];
-    return directionGeneral.data.filter((v) => {
-      // Added optional chaining here: v.Codigo?.at(-1)
-      const lasNumber = v.Codigo?.at(-1);
-      return Number.parseInt(lasNumber ?? "0") > 0;
-    });
-  }, [directionGeneral]);
-
   const { data: directionLine } = useSWR(
     directionGeneralId
       ? [
@@ -62,15 +52,9 @@ export default function TableDependencys() {
           directionGeneralId,
         ]
       : null,
-    async () => await getDirectionLine(directionGeneralId!),
+    async () => await getDirectionLine(directionGeneralId!)
   );
-  const coordinationLine = useMemo(() => {
-    if (!directionLine?.data) return [];
-    return directionLine.data.filter((v) => {
-      const lasNumber = v.Codigo?.at(-1);
-      return Number.parseInt(lasNumber ?? "0") > 0;
-    });
-  }, [directionLine]);
+
   const { data: coordination } = useSWR(
     coordinationId
       ? [
@@ -80,7 +64,7 @@ export default function TableDependencys() {
           coordinationId,
         ]
       : null,
-    async () => await getCoordination(coordinationId!),
+    async () => await getCoordination(coordinationId!)
   );
 
   return (
@@ -89,18 +73,18 @@ export default function TableDependencys() {
         <CardContent>
           <div className={`grid grid-cols-2 w-full gap-4 space-y-5`}>
             <div className={`col-span-2 space-y-2`}>
-              <Label>Dependencia</Label>
+              <Label>Organización</Label>
               <Select
                 onValueChange={(value) => {
                   setDependencyId(value);
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Seleccionar Dependencia" />
+                  <SelectValue placeholder="Seleccionar Organización" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Direcciones De Generales</SelectLabel>
+                    <SelectLabel>Organización</SelectLabel>
                     {dependency?.data.map((dp, i) => (
                       <SelectItem key={i} value={`${dp.id}`}>
                         {dp.Codigo}-{dp.dependencia}
@@ -109,27 +93,24 @@ export default function TableDependencys() {
                   </SelectGroup>
                 </SelectContent>
                 <div className="text-sm text-gray-700 text-[12px]">
-                  Consultar Coordinaciones Adscritas al Despacho /
-                  Viceministerio
+                  Consultar Dirección / Gerencia / Oficina
                 </div>
               </Select>
             </div>
 
             <div className={`space-y-2 `}>
-              <Label>Dirección General / Coordinación</Label>
+              <Label>Dirección / Gerencia / Oficina</Label>
               <Select
                 onValueChange={(value) => {
                   setDirectionGeneralId(value);
                 }}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Seleccionar Dirección General" />
+                  <SelectValue placeholder="Seleccionar Ubicacion Administrativa" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>
-                      Direcciones De General / Coordinación
-                    </SelectLabel>
+                    <SelectLabel>Dirección / Gerencia / Oficina</SelectLabel>
                     {directionGeneral?.data.map((general, i) => (
                       <SelectItem key={i} value={`${general.id}`}>
                         {general.Codigo}-{general.direccion_general}
@@ -138,13 +119,13 @@ export default function TableDependencys() {
                   </SelectGroup>
                 </SelectContent>
                 <div className="text-sm text-gray-700 text-[12px]">
-                  Consultar Coordinaciones Adscritas a la Direccion General
+                  Consultar Divisiones
                 </div>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Dirección De Linea / Coordinacion</Label>
+              <Label>División / Coordinación</Label>
 
               <Select
                 onValueChange={(value) => {
@@ -161,12 +142,17 @@ export default function TableDependencys() {
                   }
                 >
                   <SelectValue
-                    placeholder={`${directionLine?.data !== undefined && directionLine!.data?.length > 0 ? "Seleccionar Dirección De Linea" : "No Posee Direcciones De Linea"}`}
+                    placeholder={`${
+                      directionLine?.data !== undefined &&
+                      directionLine!.data?.length > 0
+                        ? "Seleccionar Ubicacion Administrativa"
+                        : "No Posee Ubicaciones Administrativas"
+                    }`}
                   />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Dirección De Linea / Coordinacion</SelectLabel>
+                    <SelectLabel>División / Coordinación</SelectLabel>
                     {directionLine?.data.map((line, i) => (
                       <SelectItem key={i} value={`${line.id}`}>
                         {line.Codigo}-{line.direccion_linea}
@@ -175,37 +161,35 @@ export default function TableDependencys() {
                   </SelectGroup>
                 </SelectContent>
                 <div className="text-[12px] text-gray-700">
-                  Consultar Coordinaciones De La Dirección De Linea
+                  Consultar Coordinaciones De La División
                 </div>
               </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-5 ">
-            {coordinationGeneral.length > 0 &&
-              Array.isArray(coordinationGeneral) && (
-                <div className="overflow-auto h-70  border rounded-2xl border-blue-700 col-span-2 ">
+            {directionLine?.data.length! > 0 &&
+              Array.isArray(directionLine?.data) && (
+                <div className="overflow-auto   border rounded-2xl border-blue-700 ">
                   <Table>
-                    <TableCaption>
-                      Coordinaciones adscritas al Despacho/Viceministerio
-                    </TableCaption>
+                    <TableCaption>División</TableCaption>
                     <TableHeader className="bg-blue-600">
                       <TableRow>
                         <TableHead className="w-[100px] font-bold text-white">
                           Código
                         </TableHead>
                         <TableHead className="text-center font-bold text-white">
-                          Coordinaciones adscritas al Despacho/Viceministerio
+                          División
                         </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {coordinationGeneral?.map((general, i) => (
+                      {directionLine.data?.map((general, i) => (
                         <TableRow key={i}>
                           <TableCell className="font-medium">
                             {general.Codigo}
                           </TableCell>
                           <TableCell className="text-center">
-                            {general.direccion_general}
+                            {general.direccion_linea}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -213,44 +197,11 @@ export default function TableDependencys() {
                   </Table>
                 </div>
               )}
-
-            <div className=" h-70     rounded-2xl">
-              {coordinationLine.length > 0 &&
-                Array.isArray(coordinationLine) && (
-                  <div className="border overflow-auto border-blue-600 rounded-2xl">
-                    <Table>
-                      <TableCaption>Coordinaciones De Lineas</TableCaption>
-                      <TableHeader className="bg-blue-600 ">
-                        <TableRow>
-                          <TableHead className="w-[100px] font-bold text-white">
-                            Código
-                          </TableHead>
-                          <TableHead className="text-center font-bold text-white ">
-                            Coordinación De Linea
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {coordinationLine?.map((direction, i) => (
-                          <TableRow key={i}>
-                            <TableCell className="font-medium">
-                              {direction.Codigo}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              {direction.direccion_linea}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-            </div>
-            <div className="h-70   rounded-2xl">
+            <div className="rounded-2xl">
               {coordination?.data.length! > 0 && (
-                <div className="border overflow-auto border-blue-600 rounded-2xl">
+                <div className="overflow-auto   border rounded-2xl border-blue-700 ">
                   <Table>
-                    <TableCaption>Coordinaciones</TableCaption>
+                    <TableCaption>Coordinación</TableCaption>
                     <TableHeader className="bg-blue-600">
                       <TableRow>
                         <TableHead className="w-[100px] font-bold text-white">
@@ -262,13 +213,13 @@ export default function TableDependencys() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {coordination?.data.map((coordination, i) => (
+                      {coordination?.data?.map((general, i) => (
                         <TableRow key={i}>
                           <TableCell className="font-medium">
-                            {coordination.Codigo}
+                            {general.Codigo}
                           </TableCell>
                           <TableCell className="text-center">
-                            {coordination.coordinacion}
+                            {general.coordinacion}
                           </TableCell>
                         </TableRow>
                       ))}

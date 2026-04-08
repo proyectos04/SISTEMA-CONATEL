@@ -4,11 +4,11 @@ import { useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { CreateDependencyAction } from "../../dependencias/crear-dependencia/actions/create-dependencys";
+import { CreateDependencyAction } from "../../ubicacion-administrativa/crear-ubicacion/actions/create-dependencys";
 import {
   schemaCreateDependency,
   schemaCreateDirectionAdm,
-} from "../../dependencias/crear-dependencia/schema/schemaCreateDependency";
+} from "../../ubicacion-administrativa/crear-ubicacion/schema/schemaCreateDependency";
 import { Button } from "../../../../../../components/ui/button";
 import { Card, CardContent } from "../../../../../../components/ui/card";
 import {
@@ -21,7 +21,7 @@ import {
 } from "../../../../../../components/ui/form";
 import { Input } from "../../../../../../components/ui/input";
 import { Switch } from "../../../../../../components/ui/switch";
-export default function CreateDependency() {
+export default function CreateUbication() {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm({
@@ -183,7 +183,7 @@ export default function CreateDependency() {
                       render={({ field }) => (
                         <FormItem className="w-full truncate p-0.5">
                           <FormLabel>
-                            Código De La Dirección De Linea / Coordinación
+                            Código De La División / Coordinación
                           </FormLabel>
                           <FormControl>
                             <Input {...field} type="number" />
@@ -198,7 +198,7 @@ export default function CreateDependency() {
                       render={({ field }) => (
                         <FormItem className="w-full truncate p-0.5">
                           <FormLabel>
-                            Nombre De La Dirección De Linea / Coordinación
+                            Nombre De La División / Coordinación
                           </FormLabel>
                           <FormControl>
                             <Input {...field} />

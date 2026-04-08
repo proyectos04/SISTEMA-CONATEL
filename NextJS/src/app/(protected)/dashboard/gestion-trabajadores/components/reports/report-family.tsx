@@ -62,13 +62,13 @@ export default function ReportEmployee() {
   const { data: session } = useSession();
   const [dependencyId, setDependencyId] = useState<number>(0);
   const [directionGeneralId, setDirectionGeneralId] = useState<string | null>(
-    null,
+    null
   );
   const [directionLineId, setDirectionLineId] = useState<string | null>(null);
 
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const {
     data: conditionDwelling,
@@ -77,65 +77,65 @@ export default function ReportEmployee() {
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
 
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     directionGeneralId ? ["directionLine", directionGeneralId] : null,
-    async () => await getDirectionLine(directionGeneralId!),
+    async () => await getDirectionLine(directionGeneralId!)
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     directionLineId ? ["coordination", directionLineId] : null,
-    async () => await getCoordination(directionLineId!),
+    async () => await getCoordination(directionLineId!)
   );
   const { data: sex, isLoading: isLoadingSex } = useSWR(
     "sex",
-    async () => await getSex(),
+    async () => await getSex()
   );
   const { data: patology, isLoading: isLoadingPatology } = useSWR(
     "patology",
-    async () => await getPatologys(),
+    async () => await getPatologys()
   );
   const { data: bloodGroup, isLoading: isLoadingBloodGroup } = useSWR(
     "blood",
-    async () => await getBloodGroup(),
+    async () => await getBloodGroup()
   );
   const { data: disability, isLoading: isLoadingDisability } = useSWR(
     "disability",
-    async () => await getDisability(),
+    async () => await getDisability()
   );
 
   const { data: nomina, isLoading: isLoadingNomina } = useSWR(
     "nomina",
-    async () => await getNominaGeneral(),
+    async () => await getNominaGeneral()
   );
 
   const { data: academyLevel, isLoading: isLoadingAcademyLevel } = useSWR(
     "academyLevel",
-    async () => await getAcademyLevel(),
+    async () => await getAcademyLevel()
   );
   const [regionId, setRegionId] = useState<number>(0);
   const [municipalityId, setMunicipalityId] = useState<string>();
   const { data: region, isLoading: isLoadingRegion } = useSWR(
     "region",
-    async () => await getRegion(),
+    async () => await getRegion()
   );
   const { data: states, isLoading: isLoadingStatesStates } = useSWR(
     regionId ? ["states", regionId] : null,
-    async () => await getStateByRegion(regionId),
+    async () => await getStateByRegion(regionId)
   );
   const { data: municipalitys, isLoading: isLoadingStatesSMunicipalitys } =
     useSWR(
       stateId ? ["municipalitys", stateId] : null,
-      async () => await getMunicipalitys(stateId!),
+      async () => await getMunicipalitys(stateId!)
     );
   const { data: parish, isLoading: isLoadingStatesParish } = useSWR(
     municipalityId ? ["parish", municipalityId] : null,
-    async () => await getParish(municipalityId!),
+    async () => await getParish(municipalityId!)
   );
   const { data: parent, isLoading: isLoadingParen } = useSWR(
     "parent",
-    async () => getParent(),
+    async () => getParent()
   );
 
   const form = useForm({
@@ -275,7 +275,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingSex ? "Cargando Generos" : "Seleccione un Genero"}`}
+                                    placeholder={`${
+                                      isLoadingSex
+                                        ? "Cargando Generos"
+                                        : "Seleccione un Genero"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -345,7 +349,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingBloodGroup ? "Cargando Grupos Sanguineos" : "Seleccione un Grupo Sanguineo"}`}
+                                    placeholder={`${
+                                      isLoadingBloodGroup
+                                        ? "Cargando Grupos Sanguineos"
+                                        : "Seleccione un Grupo Sanguineo"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -380,7 +388,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingPatology ? "Cargando Patologias" : "Seleccione una Patologias"}`}
+                                    placeholder={`${
+                                      isLoadingPatology
+                                        ? "Cargando Patologias"
+                                        : "Seleccione una Patologias"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -413,7 +425,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingDisability ? "Cargando Discapacidades" : "Seleccione una Discapacidad"}`}
+                                    placeholder={`${
+                                      isLoadingDisability
+                                        ? "Cargando Discapacidades"
+                                        : "Seleccione una Discapacidad"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -434,14 +450,14 @@ export default function ReportEmployee() {
                     {session.user.role.nombre_rol == "ADMINISTRADOR" && (
                       <fieldset className="flex flex-col gap-3 border-2 p-2 rounded-sm border-green-600">
                         <legend className="text-green-800 font-semibold">
-                          Direcciones Administativa Del Empleado
+                          Dirección Administativa Del Empleado
                         </legend>
                         <FormField
                           control={form.control}
                           name="filtros.dependencia_id"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Dependencia</FormLabel>
+                              <FormLabel>Organización</FormLabel>
                               <Select
                                 onValueChange={(values) => {
                                   field.onChange(Number.parseInt(values));
@@ -451,7 +467,11 @@ export default function ReportEmployee() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                                      placeholder={`${
+                                        isLoadingDependency
+                                          ? "Cargando Depedencias"
+                                          : "Seleccione una Dependencia"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -478,7 +498,7 @@ export default function ReportEmployee() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                Dirección General / Coordinación
+                                Dirección / Gerencia / Oficina
                               </FormLabel>
                               <Select
                                 onValueChange={(values) => {
@@ -489,7 +509,11 @@ export default function ReportEmployee() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                                      placeholder={`${
+                                        isLoadingDirectionGeneral
+                                          ? "Cargando Direcciones"
+                                          : "Seleccione una Dirección"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -511,9 +535,7 @@ export default function ReportEmployee() {
                           name="filtros.direccion_linea_id"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>
-                                Dirección De Linea / Coordinación{" "}
-                              </FormLabel>
+                              <FormLabel>División / Coordinación </FormLabel>
                               <Select
                                 onValueChange={(values) => {
                                   field.onChange(Number.parseInt(values));
@@ -523,7 +545,11 @@ export default function ReportEmployee() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDirectionLine ? "Cargando Direcciones De Linea" : "Seleccione una Dirección De Linea"}`}
+                                      placeholder={`${
+                                        isLoadingDirectionLine
+                                          ? "Cargando Dirección"
+                                          : "Seleccione una Dirección"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -553,7 +579,11 @@ export default function ReportEmployee() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccione una Coordinación"}`}
+                                      placeholder={`${
+                                        isLoadingCoordination
+                                          ? "Cargando Coordinaciones"
+                                          : "Seleccione una Coordinación"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -592,7 +622,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingNomina ? "Cargando Nominas" : "Seleccione un Tipo de Nomina"}`}
+                                    placeholder={`${
+                                      isLoadingNomina
+                                        ? "Cargando Nominas"
+                                        : "Seleccione un Tipo de Nomina"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -628,7 +662,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={` ${isLoadingAcademyLevel ? "Cargando Niveles Academicos" : "Seleccione un Nivel Academico"}`}
+                                    placeholder={` ${
+                                      isLoadingAcademyLevel
+                                        ? "Cargando Niveles Academicos"
+                                        : "Seleccione un Nivel Academico"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -666,7 +704,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingSex ? "Cargando Generos" : "Seleccione un Genero"}`}
+                                    placeholder={`${
+                                      isLoadingSex
+                                        ? "Cargando Generos"
+                                        : "Seleccione un Genero"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -737,7 +779,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingRegion ? "Cargando Regiones" : "Seleccione una Región"}`}
+                                    placeholder={`${
+                                      isLoadingRegion
+                                        ? "Cargando Regiones"
+                                        : "Seleccione una Región"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -769,7 +815,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingStatesStates ? "Cargando Estados" : "Seleccione un Estado"}`}
+                                    placeholder={`${
+                                      isLoadingStatesStates
+                                        ? "Cargando Estados"
+                                        : "Seleccione un Estado"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -801,7 +851,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingStatesSMunicipalitys ? "Cargando Municipios" : "Seleccione un Municpio"}`}
+                                    placeholder={`${
+                                      isLoadingStatesSMunicipalitys
+                                        ? "Cargando Municipios"
+                                        : "Seleccione un Municpio"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -835,7 +889,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingStatesParish ? "Cargando Parroquias" : "Seleccione una Parroquia"}`}
+                                    placeholder={`${
+                                      isLoadingStatesParish
+                                        ? "Cargando Parroquias"
+                                        : "Seleccione una Parroquia"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -866,7 +924,11 @@ export default function ReportEmployee() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingStatesConditionDwelling ? "Cargando Condiciones De Vivienda" : "Seleccione una Condición De Vivienda"}`}
+                                    placeholder={`${
+                                      isLoadingStatesConditionDwelling
+                                        ? "Cargando Condiciones De Vivienda"
+                                        : "Seleccione una Condición De Vivienda"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -879,7 +941,7 @@ export default function ReportEmployee() {
                                     >
                                       {conditionDwelling.condicion}
                                     </SelectItem>
-                                  ),
+                                  )
                                 )}
                               </SelectContent>
                             </Select>
@@ -902,8 +964,14 @@ export default function ReportEmployee() {
                 {reportListFamilys && (
                   <a
                     href={reportListFamilys}
-                    download={`Reporte_Familiares ${formatInTimeZone(new Date(), "UTC", "dd/MM/yyyy")}.pdf`}
-                    className={`${buttonVariants({ variant: "outline" })} flex-1 cursor-pointer animate-pulse`}
+                    download={`Reporte_Familiares ${formatInTimeZone(
+                      new Date(),
+                      "UTC",
+                      "dd/MM/yyyy"
+                    )}.pdf`}
+                    className={`${buttonVariants({
+                      variant: "outline",
+                    })} flex-1 cursor-pointer animate-pulse`}
                   >
                     Descargar Reporte
                     <Download />

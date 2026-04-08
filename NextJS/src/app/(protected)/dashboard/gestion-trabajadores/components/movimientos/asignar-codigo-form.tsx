@@ -42,7 +42,7 @@ import Error from "../error/error";
 import Loading from "../loading/loading";
 export function AsigCode() {
   const [searchEmployee, setSearchEmployee] = useState<string | undefined>(
-    undefined,
+    undefined
   );
 
   const [selectedCodeId, setSelectedCodeId] = useState<number>();
@@ -57,30 +57,30 @@ export function AsigCode() {
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     selecteIdDirectionGeneral
       ? ["directionLine", selecteIdDirectionGeneral]
       : "",
-    async () => await getDirectionLine(selecteIdDirectionGeneral!),
+    async () => await getDirectionLine(selecteIdDirectionGeneral!)
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     selecteIdDirectionLine ? ["coordination", selecteIdDirectionLine] : null,
-    async () => await getCoordination(selecteIdDirectionLine!),
+    async () => await getCoordination(selecteIdDirectionLine!)
   );
   const [searchParams, setSearchParams] = useState<string>();
   const { data: codeList, isLoading: isLoadingSearchCode } = useSWR(
     searchParams,
-    async () => await getCodeListSearchFree({ searchParams }),
+    async () => await getCodeListSearchFree({ searchParams })
   );
   const { data: nomina, isLoading: isLoadingNomina } = useSWR(
     "nominaGeneral",
-    async () => await getNomina(),
+    async () => await getNomina()
   );
 
   const formAsig = useForm({
@@ -132,7 +132,7 @@ export function AsigCode() {
   });
   const onSearch = (values: z.infer<typeof schemaSearch>) => {
     const filteredEntries = Object.entries(values).filter(
-      ([_, v]) => v !== "" && v !== 0 && v !== undefined && v !== null,
+      ([_, v]) => v !== "" && v !== 0 && v !== undefined && v !== null
     );
     const params = new URLSearchParams(filteredEntries as unknown as string);
     setSearchParams(params.toString());
@@ -245,7 +245,11 @@ export function AsigCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingNomina ? "Cargando Nominas" : "Seleccione un Tipo de Nomina"}`}
+                                      placeholder={`${
+                                        isLoadingNomina
+                                          ? "Cargando Nominas"
+                                          : "Seleccione un Tipo de Nomina"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -267,7 +271,7 @@ export function AsigCode() {
                           name="dependencia_id"
                           render={({ field }) => (
                             <FormItem className="col-span-2">
-                              <FormLabel>Dependencia</FormLabel>
+                              <FormLabel>Organización</FormLabel>
                               <Select
                                 onValueChange={(values) => {
                                   field.onChange(Number.parseInt(values));
@@ -277,7 +281,11 @@ export function AsigCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                                      placeholder={`${
+                                        isLoadingDependency
+                                          ? "Cargando Depedencias"
+                                          : "Seleccione una Dependencia"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -303,7 +311,7 @@ export function AsigCode() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                Dirección General / Coordinación Adscrita
+                                Dirección / Gerencia / Oficina
                               </FormLabel>
                               <Select
                                 onValueChange={(values) => {
@@ -314,7 +322,11 @@ export function AsigCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                                      placeholder={`${
+                                        isLoadingDirectionGeneral
+                                          ? "Cargando Direcciones"
+                                          : "Seleccione una Dirección"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -336,9 +348,7 @@ export function AsigCode() {
                           name="direccion_linea_id"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>
-                                Dirección De Linea / Coordinación
-                              </FormLabel>
+                              <FormLabel>División / Coordinación</FormLabel>
                               <Select
                                 onValueChange={(values) => {
                                   field.onChange(Number.parseInt(values));
@@ -348,7 +358,11 @@ export function AsigCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDirectionLine ? "Cargando Dirección De Linea / Coordinación " : "Seleccione una Dirección De Linea"}`}
+                                      placeholder={`${
+                                        isLoadingDirectionLine
+                                          ? "Cargando División / Coordinación "
+                                          : "Seleccione una Dirección De Linea"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -378,7 +392,11 @@ export function AsigCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccione una Coordinación"}`}
+                                      placeholder={`${
+                                        isLoadingCoordination
+                                          ? "Cargando Coordinaciones"
+                                          : "Seleccione una Coordinación"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -454,50 +472,50 @@ export function AsigCode() {
                           )}
                         />
                         {codeList?.data.find(
-                          (v) => v.id === selectedCodeId,
+                          (v) => v.id === selectedCodeId
                         ) && (
                           <div className="rounded-sm border-2 border-b-emerald-400-400/45 bg-emerald-200/40 p-2 mt-4">
                             <p>
                               Dirección General:{" "}
                               {codeList?.data.find(
-                                (v) => v.id === selectedCodeId,
+                                (v) => v.id === selectedCodeId
                               )?.DireccionGeneral?.direccion_general ?? "N/A"}
                             </p>
                             <p>
                               {" "}
                               Dirección De Linea:{" "}
                               {codeList?.data.find(
-                                (v) => v.id === selectedCodeId,
+                                (v) => v.id === selectedCodeId
                               )?.DireccionLinea?.direccion_linea ?? "N/A"}
                             </p>
                             <p>
                               {" "}
                               Coordinacion:{" "}
                               {codeList?.data.find(
-                                (v) => v.id === selectedCodeId,
+                                (v) => v.id === selectedCodeId
                               )?.Coordinacion?.coordinacion
                                 ? codeList?.data.find(
-                                    (v) => v.id === selectedCodeId,
+                                    (v) => v.id === selectedCodeId
                                   )?.Coordinacion?.coordinacion
                                 : "N/A"}
                             </p>
                             <p>
                               Organismo Adscrito:{" "}
                               {codeList?.data.find(
-                                (v) => v.id === selectedCodeId,
+                                (v) => v.id === selectedCodeId
                               )?.OrganismoAdscrito
                                 ? codeList?.data.find(
-                                    (v) => v.id === selectedCodeId,
+                                    (v) => v.id === selectedCodeId
                                   )?.OrganismoAdscrito?.Organismoadscrito
                                 : "N/A"}
                             </p>
                             <p>
                               Grado:{" "}
                               {codeList?.data.find(
-                                (v) => v.id === selectedCodeId,
+                                (v) => v.id === selectedCodeId
                               )?.grado?.grado
                                 ? codeList?.data.find(
-                                    (v) => v.id === selectedCodeId,
+                                    (v) => v.id === selectedCodeId
                                   )?.grado?.grado
                                 : "N/A"}
                             </p>
@@ -505,7 +523,7 @@ export function AsigCode() {
                               Cargo:{" "}
                               {
                                 codeList?.data.find(
-                                  (v) => v.id === selectedCodeId,
+                                  (v) => v.id === selectedCodeId
                                 )?.denominacioncargo.cargo
                               }
                             </p>
@@ -513,7 +531,7 @@ export function AsigCode() {
                               Cargo Específico:{" "}
                               {
                                 codeList?.data.find(
-                                  (v) => v.id === selectedCodeId,
+                                  (v) => v.id === selectedCodeId
                                 )?.denominacioncargoespecifico.cargo
                               }
                             </p>
@@ -521,7 +539,7 @@ export function AsigCode() {
                               Estatus:{" "}
                               {
                                 codeList?.data.find(
-                                  (v) => v.id === selectedCodeId,
+                                  (v) => v.id === selectedCodeId
                                 )?.estatusid.estatus
                               }
                             </p>
@@ -529,7 +547,7 @@ export function AsigCode() {
                               Tipo De Nomina:{" "}
                               {
                                 codeList?.data.find(
-                                  (v) => v.id === selectedCodeId,
+                                  (v) => v.id === selectedCodeId
                                 )?.tiponomina.nomina
                               }
                             </p>

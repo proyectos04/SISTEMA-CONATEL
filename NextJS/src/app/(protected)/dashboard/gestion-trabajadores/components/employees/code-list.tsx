@@ -57,26 +57,26 @@ export function CodeListPage() {
   const [dependencyId, setDependencyId] = useState<number>(0);
 
   const [directionGeneralId, setDirectionGeneralId] = useState<string | null>(
-    null,
+    null
   );
   const [directionLineId, setDirectionLineId] = useState<string | null>(null);
 
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     directionGeneralId ? ["directionLine", directionGeneralId] : null,
-    async () => await getDirectionLine(directionGeneralId!),
+    async () => await getDirectionLine(directionGeneralId!)
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     directionLineId ? ["coordination", directionLineId] : null,
-    async () => await getCoordination(directionLineId!),
+    async () => await getCoordination(directionLineId!)
   );
   const form = useForm({
     defaultValues: {
@@ -91,7 +91,7 @@ export function CodeListPage() {
   });
   const { data: nomina, isLoading: isLoadingNomina } = useSWR(
     "nominaGeneral",
-    async () => await getNominaGeneral(),
+    async () => await getNominaGeneral()
   );
   const onSearch = (values: z.infer<typeof schemaSearch>) => {
     const isNotAdmin = session?.user?.role.nombre_rol !== "ADMINISTRADOR";
@@ -102,23 +102,23 @@ export function CodeListPage() {
         : values.dependencia_id,
       direccion_general_id: isNotAdmin
         ? Number(session?.user.directionGeneral?.id)
-        : (values.direccion_general_id ?? ""),
+        : values.direccion_general_id ?? "",
       direccion_linea_id: isNotAdmin
         ? Number(session?.user.direccionLine?.id) || null
-        : (values.direccion_linea_id ?? ""),
+        : values.direccion_linea_id ?? "",
       coordinacion_id: isNotAdmin
         ? Number(session?.user.coordination?.id) || null
-        : (values.coordinacion_id ?? ""),
+        : values.coordinacion_id ?? "",
     };
     const filteredEntries = Object.entries(payload).filter(
-      ([_, v]) => v !== "" && v !== undefined && v !== null,
+      ([_, v]) => v !== "" && v !== undefined && v !== null
     );
     const params = new URLSearchParams(filteredEntries as unknown as string);
     setSearchParams(params.toString());
   };
   const { data: codeList, isLoading } = useSWR(
     searchParams,
-    async () => await getCodeListSearch({ searchParams }),
+    async () => await getCodeListSearch({ searchParams })
   );
 
   const cleanFields = () => {
@@ -177,7 +177,11 @@ export function CodeListPage() {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingNomina ? "Cargando Nominas" : "Seleccione un Tipo de Nomina"}`}
+                                placeholder={`${
+                                  isLoadingNomina
+                                    ? "Cargando Nominas"
+                                    : "Seleccione un Tipo de Nomina"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -199,7 +203,7 @@ export function CodeListPage() {
                     name="dependencia_id"
                     render={({ field }) => (
                       <FormItem className="col-span-2">
-                        <FormLabel>Dependencia</FormLabel>
+                        <FormLabel>Organización</FormLabel>
                         <Select
                           onValueChange={(values) => {
                             field.onChange(Number.parseInt(values));
@@ -209,7 +213,11 @@ export function CodeListPage() {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                                placeholder={`${
+                                  isLoadingDependency
+                                    ? "Cargando Depedencias"
+                                    : "Seleccione una Dependencia"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -230,7 +238,7 @@ export function CodeListPage() {
                     name="direccion_general_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dirección General</FormLabel>
+                        <FormLabel>Dirección / Gerencia / Oficina</FormLabel>
                         <Select
                           onValueChange={(values) => {
                             field.onChange(Number.parseInt(values));
@@ -240,7 +248,11 @@ export function CodeListPage() {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                                placeholder={`${
+                                  isLoadingDirectionGeneral
+                                    ? "Cargando Direcciones"
+                                    : "Seleccione una Dirección"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -261,7 +273,8 @@ export function CodeListPage() {
                     name="direccion_linea_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dirección De Linea</FormLabel>
+                        <FormLabel>División / Coordinación </FormLabel>
+
                         <Select
                           onValueChange={(values) => {
                             field.onChange(Number.parseInt(values));
@@ -271,7 +284,11 @@ export function CodeListPage() {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingDirectionLine ? "Cargando Direcciones De Linea" : "Seleccione una Dirección De Linea"}`}
+                                placeholder={`${
+                                  isLoadingDirectionLine
+                                    ? "Cargando Direcciones De Linea"
+                                    : "Seleccione una Dirección De Linea"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -301,7 +318,11 @@ export function CodeListPage() {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccione una Coordinación"}`}
+                                placeholder={`${
+                                  isLoadingCoordination
+                                    ? "Cargando Coordinaciones"
+                                    : "Seleccione una Coordinación"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>

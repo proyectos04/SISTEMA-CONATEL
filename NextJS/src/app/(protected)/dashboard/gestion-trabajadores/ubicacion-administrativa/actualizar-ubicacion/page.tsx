@@ -17,31 +17,19 @@ export default function UpgradeDependency() {
     <PageLayout title="Actualizar Informacion De Dependencias">
       <Tabs defaultValue="dependencia">
         <TabsList>
-          <TabsTrigger value="dependencia">Actualizar Dependencia</TabsTrigger>
           <TabsTrigger value="direccion-general/coord">
-            Direccion General / Coordinación
+            Dirección / Gerencia / Oficina
           </TabsTrigger>
           <TabsTrigger value="direccion-linea/coord">
-            Direccion De Linea / Coordinación De Linea
+            División / Coordinación
           </TabsTrigger>
           <TabsTrigger value="coord">Coordinación</TabsTrigger>
         </TabsList>
-        <TabsContent value="dependencia">
-          <Card>
-            <CardHeader>
-              <CardTitle>Actualizar Dependencia</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <UpdateDependency />
-            </CardContent>
-          </Card>
-        </TabsContent>
+
         <TabsContent value="direccion-general/coord">
           <Card>
             <CardHeader>
-              <CardTitle>
-                Actualizar Dirección General o Coordinación Adscrita
-              </CardTitle>
+              <CardTitle>Actualizar Dirección / Gerencia / Oficina</CardTitle>
             </CardHeader>
             <CardContent>
               <UpdateDireccionGeneralCoord />
@@ -51,9 +39,7 @@ export default function UpgradeDependency() {
         <TabsContent value="direccion-linea/coord">
           <Card>
             <CardHeader>
-              <CardTitle>
-                Actualizar Dirección De Linea o Coordinación de Linea
-              </CardTitle>
+              <CardTitle>Actualizar División / Coordinación</CardTitle>
             </CardHeader>
             <CardContent>
               <UpdateDireccionLineCoord />

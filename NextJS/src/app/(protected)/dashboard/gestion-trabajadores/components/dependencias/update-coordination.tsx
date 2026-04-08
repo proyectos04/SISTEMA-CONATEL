@@ -31,8 +31,8 @@ import Loading from "../loading/loading";
 import {
   schemaUpgradeCoordination,
   SchemaUpgradeCoordination,
-} from "../../dependencias/actualizar-dependencia/schema/schemaUpdateCoordination";
-import upgradeCoordinationActions from "../../dependencias/actualizar-dependencia/actions/upgradeCoordination";
+} from "../../ubicacion-administrativa/actualizar-ubicacion/schema/schemaUpdateCoordination";
+import upgradeCoordinationActions from "../../ubicacion-administrativa/actualizar-ubicacion/actions/upgradeCoordination";
 
 export default function UpdateCoord() {
   const [selecteIdDirectionLine, setSelecteIdDirectionLine] =
@@ -44,21 +44,21 @@ export default function UpdateCoord() {
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     selecteIdDirectionLine ? ["coordination", selecteIdDirectionLine] : null,
-    async () => await getCoordination(selecteIdDirectionLine!),
+    async () => await getCoordination(selecteIdDirectionLine!)
   );
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     selecteIdDirectionGeneral
       ? ["directionLine", selecteIdDirectionGeneral]
       : "",
-    async () => await getDirectionLine(selecteIdDirectionGeneral!),
+    async () => await getDirectionLine(selecteIdDirectionGeneral!)
   );
   const form = useForm<SchemaUpgradeCoordination>({
     defaultValues: {
@@ -94,7 +94,7 @@ export default function UpdateCoord() {
               name="dependenciaId"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Dependencia</FormLabel>
+                  <FormLabel>Organización</FormLabel>
                   <Select
                     onValueChange={(values) => {
                       field.onChange(Number.parseInt(values));
@@ -104,7 +104,11 @@ export default function UpdateCoord() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                          placeholder={`${
+                            isLoadingDependency
+                              ? "Cargando Organización"
+                              : "Seleccione una Organización"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -125,9 +129,7 @@ export default function UpdateCoord() {
               name="direccionGeneral"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Dirección General / Coordinación Adscrita
-                  </FormLabel>
+                  <FormLabel>Dirección / Gerencia / Oficina</FormLabel>
                   <Select
                     onValueChange={(values) => {
                       field.onChange(Number.parseInt(values));
@@ -137,7 +139,11 @@ export default function UpdateCoord() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                          placeholder={`${
+                            isLoadingDirectionGeneral
+                              ? "Cargando Direcciones Generales"
+                              : "Seleccione una Dirección General"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -158,7 +164,7 @@ export default function UpdateCoord() {
               name="direccionLinea"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Dirección De Linea / Coordinación</FormLabel>
+                  <FormLabel>División / Coordinación</FormLabel>
                   <Select
                     onValueChange={(values) => {
                       field.onChange(Number.parseInt(values));
@@ -168,7 +174,11 @@ export default function UpdateCoord() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingDirectionLine ? "Cargando Dirección De Linea / Coordinación " : "Seleccione una Dirección De Linea"}`}
+                          placeholder={`${
+                            isLoadingDirectionLine
+                              ? "Cargando División / Coordinación "
+                              : "Seleccione una Dirección De Linea"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -198,7 +208,11 @@ export default function UpdateCoord() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccione una Coordinación"}`}
+                          placeholder={`${
+                            isLoadingCoordination
+                              ? "Cargando Coordinaciones"
+                              : "Seleccione una Coordinación"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>

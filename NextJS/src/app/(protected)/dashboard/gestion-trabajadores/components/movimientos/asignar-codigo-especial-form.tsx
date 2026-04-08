@@ -65,7 +65,7 @@ export function CodigoCatalogEspecialForm({
   const [activeDirectionGeneral, setActiveDirectionGeneral] =
     useState<boolean>(false);
   const [searchEmployee, setSearchEmployee] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [selecteIdDirectionGeneral, setSelecteIdDirectionGeneral] =
     useState<string>();
@@ -97,41 +97,41 @@ export function CodigoCatalogEspecialForm({
 
   const { data: cargoEspecifico, isLoading: isLoadingCargoEspecifico } = useSWR(
     "cargoEspecifico",
-    async () => await getCargoEspecifico(),
+    async () => await getCargoEspecifico()
   );
   const { data: cargo, isLoading: isLoadingCargo } = useSWR("cargo", async () =>
-    getCargo(),
+    getCargo()
   );
   const { data: nomina, isLoading: isLoadingNomina } = useSWR(
     "nomina",
-    async () => getNominaEspecial(),
+    async () => getNominaEspecial()
   );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     selecteIdDirectionGeneral
       ? ["directionLine", selecteIdDirectionGeneral]
       : "",
-    async () => await getDirectionLine(selecteIdDirectionGeneral!),
+    async () => await getDirectionLine(selecteIdDirectionGeneral!)
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     selecteIdDirectionLine ? ["coordination", selecteIdDirectionLine] : null,
-    async () => await getCoordination(selecteIdDirectionLine!),
+    async () => await getCoordination(selecteIdDirectionLine!)
   );
   const { data: grado, isLoading: isLoadingGrado } = useSWR(
     "grado",
-    async () => await getGrado(),
+    async () => await getGrado()
   );
   const { data: organismoAds, isLoading: isLoadingOrganismoAds } = useSWR(
     "organismoAds",
-    async () => await getOrganismosAds(),
+    async () => await getOrganismosAds()
   );
   const form = useForm({
     resolver: zodResolver(schemaCodeEspecial),
@@ -245,7 +245,11 @@ export function CodigoCatalogEspecialForm({
                       <FormControl>
                         <SelectTrigger className="w-full truncate">
                           <SelectValue
-                            placeholder={`${isLoadingCargo ? "Cargando Cargos" : "Seleccione una Denominación De Cargo"}`}
+                            placeholder={`${
+                              isLoadingCargo
+                                ? "Cargando Cargos"
+                                : "Seleccione una Denominación De Cargo"
+                            }`}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -275,7 +279,11 @@ export function CodigoCatalogEspecialForm({
                       <FormControl>
                         <SelectTrigger className="w-full truncate">
                           <SelectValue
-                            placeholder={`${isLoadingCargoEspecifico ? "Cargando Cargos Especificos" : "Seleccione una Denominación De Cargo Específico"}`}
+                            placeholder={`${
+                              isLoadingCargoEspecifico
+                                ? "Cargando Cargos Especificos"
+                                : "Seleccione una Denominación De Cargo Específico"
+                            }`}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -306,7 +314,11 @@ export function CodigoCatalogEspecialForm({
                       <FormControl>
                         <SelectTrigger className="w-full truncate">
                           <SelectValue
-                            placeholder={`${isLoadingNomina ? "Cargando Nominas" : "Seleccione un Tipo de Nomina"}`}
+                            placeholder={`${
+                              isLoadingNomina
+                                ? "Cargando Nominas"
+                                : "Seleccione un Tipo de Nomina"
+                            }`}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -336,7 +348,11 @@ export function CodigoCatalogEspecialForm({
                       <FormControl>
                         <SelectTrigger className="w-full truncate">
                           <SelectValue
-                            placeholder={`${isLoadingGrado ? "Cargando Grados" : "Seleccione un Grado"}`}
+                            placeholder={`${
+                              isLoadingGrado
+                                ? "Cargando Grados"
+                                : "Seleccione un Grado"
+                            }`}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -366,7 +382,11 @@ export function CodigoCatalogEspecialForm({
                       <FormControl>
                         <SelectTrigger className="w-full truncate">
                           <SelectValue
-                            placeholder={`${isLoadingGrado ? "Cargando Organismos Adscritos" : "Seleccione Un Organismo Adscrito"}`}
+                            placeholder={`${
+                              isLoadingGrado
+                                ? "Cargando Organismos Adscritos"
+                                : "Seleccione Un Organismo Adscrito"
+                            }`}
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -388,9 +408,11 @@ export function CodigoCatalogEspecialForm({
                 control={form.control}
                 render={({ field }) => (
                   <FormItem
-                    className={`${!activeDirectionGeneral ? "col-span-2" : "truncate"}`}
+                    className={`${
+                      !activeDirectionGeneral ? "col-span-2" : "truncate"
+                    }`}
                   >
-                    <FormLabel>Dependencia</FormLabel>
+                    <FormLabel>Organización</FormLabel>
                     <FormControl>
                       <Select
                         onValueChange={(value) => {
@@ -407,7 +429,7 @@ export function CodigoCatalogEspecialForm({
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>
-                                Direcciones De Generales
+                                Dirección / Gerencia / Oficina
                               </SelectLabel>
                               {dependency?.data.map((dp, i) => (
                                 <SelectItem key={i} value={`${dp.id}`}>
@@ -421,7 +443,7 @@ export function CodigoCatalogEspecialForm({
                     </FormControl>
                     <FormDescription>
                       <div className="flex flex-row items-center text-left gap-2 justify-center">
-                        ¿Desea Agregarle Una Dirección General?
+                        ¿Desea Agregarle Una División / Coordinación?
                         <Switch
                           onCheckedChange={(bool) => {
                             setActiveDirectionGeneral(bool);
@@ -440,7 +462,7 @@ export function CodigoCatalogEspecialForm({
                     name="DireccionGeneral"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dirección General</FormLabel>
+                        <FormLabel>Dirección / Gerencia / Oficina</FormLabel>
                         <Select
                           onValueChange={(values) => {
                             field.onChange(Number.parseInt(values));
@@ -450,7 +472,11 @@ export function CodigoCatalogEspecialForm({
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                                placeholder={`${
+                                  isLoadingDirectionGeneral
+                                    ? "Cargando Direcciones"
+                                    : "Seleccione una Dirección"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -464,7 +490,7 @@ export function CodigoCatalogEspecialForm({
                         </Select>
                         <FormDescription>
                           <div className="flex flex-row items-center text-left gap-2 justify-center">
-                            ¿Desea Agregarle Una Dirección De Linea?
+                            ¿Desea Agregarle Una División / Coordinación?
                             <Switch
                               onCheckedChange={(bool) => {
                                 setActiveDirectionLine(bool);
@@ -489,7 +515,7 @@ export function CodigoCatalogEspecialForm({
                       <FormItem
                         className={`${activeCoordination ? "" : "col-span-2"}`}
                       >
-                        <FormLabel>Dirección De Linea / Coordinacion</FormLabel>
+                        <FormLabel>División / Coordinación</FormLabel>
                         <Select
                           onValueChange={(values) => {
                             field.onChange(Number.parseInt(values));
@@ -499,7 +525,11 @@ export function CodigoCatalogEspecialForm({
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingDirectionLine ? "Cargando Direcciones De Linea" : "Seleccione una Dirección De Linea"}`}
+                                placeholder={`${
+                                  isLoadingDirectionLine
+                                    ? "Cargando Direcciones De Linea"
+                                    : "Seleccione una Dirección De Linea"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -542,7 +572,11 @@ export function CodigoCatalogEspecialForm({
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccione una Coordinación"}`}
+                                    placeholder={`${
+                                      isLoadingCoordination
+                                        ? "Cargando Coordinaciones"
+                                        : "Seleccione una Coordinación"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>

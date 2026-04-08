@@ -20,11 +20,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { getDependency } from "../../api/getInfoRac";
-import upgradeDependencyActions from "../../dependencias/actualizar-dependencia/actions/upgradeDependency";
+import upgradeDependencyActions from "../../ubicacion-administrativa/actualizar-ubicacion/actions/upgradeDependency";
 import {
   SchemaUpgradeDependnecyType,
   schemaUpgradeDependnecy,
-} from "../../dependencias/actualizar-dependencia/schema/schemaUpdateDependency";
+} from "../../ubicacion-administrativa/actualizar-ubicacion/schema/schemaUpdateDependency";
 import Loading from "../loading/loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -33,7 +33,7 @@ export default function UpdateDependency() {
 
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
 
   const form = useForm<SchemaUpgradeDependnecyType>({
@@ -68,7 +68,7 @@ export default function UpdateDependency() {
               name="id"
               render={({ field }) => (
                 <FormItem className="col-span-2">
-                  <FormLabel>Dependencia</FormLabel>
+                  <FormLabel>Organización</FormLabel>
                   <Select
                     onValueChange={(values) => {
                       field.onChange(Number.parseInt(values));
@@ -77,7 +77,11 @@ export default function UpdateDependency() {
                     <FormControl>
                       <SelectTrigger className="w-full truncate">
                         <SelectValue
-                          placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                          placeholder={`${
+                            isLoadingDependency
+                              ? "Cargando Depedencias"
+                              : "Seleccione una Dependencia"
+                          }`}
                         />
                       </SelectTrigger>
                     </FormControl>

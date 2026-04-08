@@ -60,15 +60,11 @@ export const columnsCode: ColumnDef<Code>[] = [
       return orgAds;
     },
   },
-  {
-    accessorKey: "Dependencia.dependencia",
-    id: "Dependencia",
-    header: "Dependencia",
-  },
+
   {
     accessorKey: "DireccionGeneral.direccion_general",
-    id: "Dirección General",
-    header: "Dirección General",
+    id: "Dirección / Gerencia / Oficina",
+    header: "Dirección / Gerencia / Oficina",
     cell: ({ getValue }) => {
       const directionGeneral = getValue();
       if (!directionGeneral) return "N/A";
@@ -77,7 +73,8 @@ export const columnsCode: ColumnDef<Code>[] = [
   },
   {
     accessorKey: "DireccionLinea.direccion_linea",
-    header: "Dirección De Linea",
+    header: "División / Coordinación",
+    id: "División / Coordinación",
     cell: ({ getValue }) => {
       const dirLine = getValue();
       if (!dirLine) return "N/A";
