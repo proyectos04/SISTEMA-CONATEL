@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from USER.models import  *
 from RAC.models import *
-
+from RAC.serializers.personal_activo_serializers import CleanZerosMixin
 from django.contrib.auth.hashers import check_password, make_password
 
 
@@ -107,7 +107,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data['password'])
 
         return cuenta.objects.create(**validated_data) 
-class UpdateCuentaSerializer(serializers.ModelSerializer):
+class UpdateCuentaSerializer(CleanZerosMixin,serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, style={'input_type': 'password'})
 
     class Meta:

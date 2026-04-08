@@ -362,10 +362,10 @@ class GestionEgreso_PasivoSerializer(BaseActionInputSerializer):
             tiponominaid_id=validated_data['tiponominaid'],
             estatusid=estatus_activo,
             Tipo_personal=tipo_pasivo,
-            gradoid=ultima_asig.gradoid,
+            gradoid=None,
             Dependencia =  dg_humana.dependenciaId if dg_humana else Dependencias.objects.get(id=1),
             DireccionGeneral=dg_humana,
-            DireccionLinea=dl_humana,
+            DireccionLinea=None,
             Coordinacion=None,
             OrganismoAdscritoid=ultima_asig.OrganismoAdscritoid,
             observaciones=f"Cargo pasivo generado. {motivo_obj.movimiento}"
@@ -452,8 +452,8 @@ class TipoMovimientoSerializer(serializers.ModelSerializer):
 
         
 class EmployeeCargoHistorySerializer(serializers.ModelSerializer):
-    nombre_analista = serializers.CharField(source='ejecutado_por.username', read_only=True)
-    cedula_analista = serializers.CharField(source='ejecutado_por.cedula', read_only=True)
+    modificado_por_usuario = serializers.SerializerMethodField()
+    cedula_analista = serializers.CharField(source='ejecutado_por.cedula.cedulaidentidad', read_only=True)
     motivo_movimiento = TipoMovimientoSerializer(source='motivo',read_only=True)
     new_estatus = EstatusSerializer(source='estatus',read_only=True)
     new_tipoPersonal = TipoPersonalSerializer(source='tipo_personal',read_only=True)
@@ -469,11 +469,18 @@ class EmployeeCargoHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeMovementHistory
         fields = [
-            'id', 'codigo_puesto', 'fecha_movimiento', 'nombre_analista', 'cedula_analista',
+            'id', 'codigo_puesto', 'fecha_movimiento', 'modificado_por_usuario', 'cedula_analista',
             'motivo_movimiento','new_estatus','new_tipoPersonal',
             'new_denominacioncargo', 'new_denominacioncargoespecifico', 'new_grado', 
             'new_tiponomina','new_Dependencia' ,'new_DireccionGeneral', 'new_DireccionLinea', 'new_Coordinacion'
         ]
+        
+    def get_modificado_por_usuario(self, obj):
+        try:
+            empleado = obj.ejecutado_por.cedula
+            return f"{empleado.nombres} {empleado.apellidos}".strip()
+        except AttributeError:
+            return "Analista no encontrado"
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

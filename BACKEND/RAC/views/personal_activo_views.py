@@ -1,27 +1,22 @@
+import pandas as pd
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.response import Response
-
-from RAC.serializers.personal_activo_serializers import *
-from django.db.models import Prefetch
-from ..models.personal_models import *
-from ..models.ubicacion_models import *
-from RAC.filters.filters_personal import EmployeeFilter, AsigTrabajoFilter
-from ..services.constants import *
-
-from drf_spectacular.utils import extend_schema
-
-
-
-
-import pandas as pd
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser
+from drf_spectacular.utils import extend_schema
+from RAC.serializers.personal_activo_serializers import *
+from django.db.models import Prefetch
+from ..models.personal_models import *
+from ..models.ubicacion_models import *
+
+from RAC.filters.filters_personal import EmployeeFilter, AsigTrabajoFilter
+from ..services.constants import *
 
 from USER.models.user_models import cuenta as User  
 
@@ -68,7 +63,12 @@ class ImportarCargosESPECIALESView(APIView):
 
             if not usuario_historial:
                 raise Exception("Error crítico: No existe el usuario con ID 10.")
-
+            
+            try:
+                motivo_asignacion = Tipo_movimiento.objects.get(movimiento__iexact="ASIGNACION DE CARGO")
+            except Tipo_movimiento.DoesNotExist:
+                raise Exception("Error crítico: El motivo 'ASIGNACION DE CARGO' no existe en la base de datos.") 
+            
             def generar_codigo_especial(prefijo):
                 ultimo_registro = AsigTrabajo.objects.filter(codigo__startswith=prefijo).order_by('-codigo').first()
                 if ultimo_registro and ultimo_registro.codigo:
@@ -161,6 +161,13 @@ class ImportarCargosESPECIALESView(APIView):
                         
                         asignacion._history_user = usuario_historial
                         asignacion.save()
+                        registrar_historial_movimiento(
+                            empleado=asignacion.employee, 
+                            puesto=asignacion,
+                            tipo_movimiento='INGRESO',
+                            motivo=motivo_asignacion,
+                            usuario=usuario_historial
+                        )
                         creados += 1
 
                     except Exception as e:
@@ -257,6 +264,13 @@ class ImportarCargosView(APIView):
                         
                         asignacion._history_user = usuario_historial
                         asignacion.save()
+                        registrar_historial_movimiento(
+                           empleado=empleado,
+                           puesto=asignacion,
+                           tipo_movimiento='INGRESO',
+                           motivo="ASIGNACION DE CARGO",
+                          usuario=usuario_historial
+                        )
                         creados += 1
 
                     except Exception as e:
@@ -381,6 +395,211 @@ class ImportEmployeesView(APIView):
             return Response({"error": f"Error al leer el archivo: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+class ImportFullEmployeeDataView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request):
+        archivo = request.FILES.get('archivo')
+        usuario_id = request.data.get('usuario_id', 10)
+
+        if not archivo:
+            return Response({"error": "No se envió ningún archivo"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # 1. Leer archivo
+            df = pd.read_excel(archivo) if archivo.name.endswith(('.xlsx', '.xls')) else pd.read_csv(archivo)
+            df.columns = df.columns.str.strip().str.lower()
+            
+            # 2. Preparar Caché (Pre-carga de tablas maestras)
+            def normalize(t):
+                if pd.isna(t) or not str(t).strip(): return ""
+                return " ".join(str(t).split()).upper()
+
+            cache = {
+                # Personales y Físicos
+                'sexo': {normalize(obj.sexo): obj for obj in Sexo.objects.all()},
+                'estado_civil': {normalize(obj.estadoCivil): obj for obj in estado_civil.objects.all()},
+                'sangre': {normalize(obj.GrupoSanguineo): obj for obj in GrupoSanguineo.objects.all()},
+                'talla_c': {normalize(obj.talla): obj for obj in Talla_Camisas.objects.all()},
+                'talla_p': {normalize(obj.talla): obj for obj in Talla_Pantalones.objects.all()},
+                'talla_z': {normalize(obj.talla): obj for obj in Talla_Zapatos.objects.all()},
+                
+                # Académicos
+                'niveles': {normalize(obj.nivelacademico): obj for obj in NivelAcademico.objects.all()},
+                'carreras': {normalize(obj.nombre_carrera): obj for obj in carreras.objects.all()},
+                'menciones': {normalize(obj.nombre_mencion): obj for obj in Menciones.objects.all()},
+                
+                # Vivienda
+                'vivienda_cond': {normalize(obj.condicion): obj for obj in condicion_vivienda.objects.all()},
+                'estados': {normalize(obj.estado): obj for obj in direccion_models.Estado.objects.all()}, # Ajusta 'nombre' si tu campo se llama distinto
+                'municipios': {normalize(obj.municipio): obj for obj in direccion_models.Municipio.objects.all()},
+                'parroquias': {normalize(obj.parroquia): obj for obj in direccion_models.Parroquia.objects.all()},
+                
+                # Contactos
+                'parentescos': {normalize(obj.descripcion_parentesco): obj for obj in Parentesco.objects.all()}, # Ajusta al nombre real de tu campo en Parentesco
+                
+                # M2M Salud
+                'alergias': {normalize(obj.alergia): obj for obj in Alergias.objects.all()},
+                'patologias': {normalize(obj.patologia): obj for obj in patologias_Cronicas.objects.all()},
+                'discapacidades': {normalize(obj.discapacidad): obj for obj in Discapacidades.objects.all()},
+            }
+
+            usuario_historial = User.objects.filter(id=usuario_id).first()
+            if not usuario_historial:
+                return Response({"error": f"Usuario ID {usuario_id} no existe para historial."}, status=status.HTTP_400_BAD_REQUEST)
+
+            errores = []
+            creados = 0
+            actualizados = 0
+
+            # 3. Procesamiento Atómico
+            try:
+                with transaction.atomic():
+                    for index, row in df.iterrows():
+                        linea = index + 2
+                        try:
+                            cedula = str(row.get('cedula', '')).split('.')[0].strip()
+                            if not cedula:
+                                errores.append(f"Línea {linea}: Cédula vacía.")
+                                continue
+
+                            def get_obj(cat, col):
+                                val = normalize(row.get(col))
+                                return cache[cat].get(val) if val else None
+
+                            def parse_date(col):
+                                val = row.get(col)
+                                if pd.isna(val) or val == "": return None
+                                try:
+                                    return pd.to_datetime(val).date()
+                                except: return None
+
+                            # --- 1. INFO BÁSICA (Employee) ---
+                            employee_data = {
+                                'nombres': normalize(row.get('nombres')),
+                                'apellidos': normalize(row.get('apellidos')),
+                                'fecha_nacimiento': parse_date('fecha_nacimiento'),
+                                'fechaingresoorganismo': parse_date('fecha_ingreso_organismo'),
+                                'correo': str(row.get('correo', '')).lower() if not pd.isna(row.get('correo')) else None,
+                                'telefono_movil': str(row.get('telefono_movil', '')),
+                                'telefono_habitacion': str(row.get('telefono_habitacion', '')),
+                                'profile': str(row.get('perfil_profesional', '')) if not pd.isna(row.get('perfil_profesional')) else None,
+                                'sexoid': get_obj('sexo', 'sexo'),
+                                'estadoCivil': get_obj('estado_civil', 'estado_civil'),
+                                'n_contrato': str(row.get('n_contrato', '')) if not pd.isna(row.get('n_contrato')) else None,
+                            }
+
+                            emp_instance, created = Employee.objects.update_or_create(
+                                cedulaidentidad=cedula,
+                                defaults=employee_data
+                            )
+                            emp_instance._history_user = usuario_historial
+                            emp_instance.save()
+
+                            if created: creados += 1 
+                            else: actualizados += 1
+
+                            # --- 2. DATOS DE VIVIENDA ---
+                            if normalize(row.get('direccion_exacta')):
+                                datos_vivienda.objects.update_or_create(
+                                    empleado_id=emp_instance,
+                                    defaults={
+                                        'estado_id': get_obj('estados', 'estado'),
+                                        'municipio_id': get_obj('municipios', 'municipio'),
+                                        'parroquia': get_obj('parroquias', 'parroquia'),
+                                        'direccion_exacta': row.get('direccion_exacta'),
+                                        'condicion_vivienda_id': get_obj('vivienda_cond', 'condicion_vivienda'),
+                                    }
+                                )
+
+                            # --- 3. PERFIL FÍSICO ---
+                            perfil_fisico.objects.update_or_create(
+                                empleado_id=emp_instance,
+                                defaults={
+                                    'tallaCamisa': get_obj('talla_c', 'talla_camisa'),
+                                    'tallaPantalon': get_obj('talla_p', 'talla_pantalon'),
+                                    'tallaZapatos': get_obj('talla_z', 'talla_zapatos'),
+                                }
+                            )
+
+                            # --- 4. FORMACIÓN ACADÉMICA ---
+                            if normalize(row.get('institucion_academica')):
+                                formacion_academica.objects.update_or_create(
+                                    empleado_id=emp_instance,
+                                    defaults={
+                                        'nivel_Academico_id': get_obj('niveles', 'nivel_academico'),
+                                        'carrera_id': get_obj('carreras', 'carrera'),
+                                        'mencion_id': get_obj('menciones', 'mencion'),
+                                        'institucion': normalize(row.get('institucion_academica')),
+                                        'capacitacion': normalize(row.get('capacitacion')),
+                                    }
+                                )
+
+                            # --- 5. PERFIL DE SALUD ---
+                            salud_obj, _ = perfil_salud.objects.update_or_create(
+                                empleado_id=emp_instance,
+                                defaults={
+                                    'grupoSanguineo': get_obj('sangre', 'grupo_sanguineo'),
+                                }
+                            )
+                            
+                            def sync_m2m(field_obj, cat, col_name):
+                                raw_val = row.get(col_name)
+                                if pd.isna(raw_val): return
+                                items = [normalize(x.strip()) for x in str(raw_val).split(',')]
+                                ids = [cache[cat][i].id for i in items if i in cache[cat]]
+                                field_obj.set(ids)
+
+                            sync_m2m(salud_obj.alergias, 'alergias', 'alergias')
+                            sync_m2m(salud_obj.patologiaCronica, 'patologias', 'patologias')
+                            sync_m2m(salud_obj.discapacidad, 'discapacidades', 'discapacidades')
+
+                            # --- 6. CONTACTO DE EMERGENCIA ---
+                            if normalize(row.get('contacto_nombres')) and normalize(row.get('contacto_apellidos')):
+                                # Usamos update_or_create usando nombres y apellidos como llaves
+                                # para evitar duplicar el mismo contacto si se corre el Excel 2 veces
+                                contacto_emergencia.objects.update_or_create(
+                                    empleado_id=emp_instance,
+                                    nombres=normalize(row.get('contacto_nombres')),
+                                    apellidos=normalize(row.get('contacto_apellidos')),
+                                    defaults={
+                                        'telefono': str(row.get('contacto_telefono', '')),
+                                        'RelacionId': get_obj('parentescos', 'contacto_parentesco')
+                                    }
+                                )
+
+                            # --- 7. ANTECEDENTES DE SERVICIO ---
+                            if normalize(row.get('ant_institucion')):
+                                antecedentes_servicio.objects.update_or_create(
+                                    empleado_id=emp_instance,
+                                    institucion=normalize(row.get('ant_institucion')),
+                                    defaults={
+                                        'fecha_ingreso': parse_date('ant_fecha_ingreso'),
+                                        'fecha_egreso': parse_date('ant_fecha_egreso')
+                                    }
+                                )
+
+                        except Exception as e:
+                            errores.append(f"Línea {linea}: {str(e)}")
+
+                    if errores:
+                        raise ValueError("Se detectaron errores de validación. Operación cancelada (Rollback).")
+
+                return Response({
+                    "mensaje": "Proceso completado con éxito",
+                    "creados": creados,
+                    "actualizados": actualizados
+                }, status=status.HTTP_201_CREATED)
+
+            except ValueError as ve:
+                return Response({
+                    "error": str(ve),
+                    "detalles": errores
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({"error": f"Error crítico al procesar el archivo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 # ......................................................................
 
 
