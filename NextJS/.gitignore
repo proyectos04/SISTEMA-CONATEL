@@ -4,4 +4,3 @@ node_modules/
 /backend-oac/
 backend-oac/
 .env.local
-.env
