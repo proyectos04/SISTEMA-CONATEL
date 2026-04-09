@@ -15,7 +15,7 @@ import UpdateCoord from "../../components/dependencias/update-coordination";
 export default function UpgradeDependency() {
   return (
     <PageLayout title="Actualizar Informacion De Dependencias">
-      <Tabs defaultValue="dependencia">
+      <Tabs defaultValue="direccion-general/coord">
         <TabsList>
           <TabsTrigger value="direccion-general/coord">
             Dirección / Gerencia / Oficina
