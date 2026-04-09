@@ -209,9 +209,9 @@ export default function FeedBack() {
           <TabsTrigger value="dis">Discapacidades</TabsTrigger>
           <TabsTrigger value="pat">Patologias</TabsTrigger>
           <TabsTrigger value="aler">Alergias</TabsTrigger>
-          <TabsTrigger value="retro-beneficio">
+          {/*<TabsTrigger value="retro-beneficio">
             Retroalimentar El Sistema De Beneficios
-          </TabsTrigger>
+          </TabsTrigger>*/}
         </TabsList>
         <TabsContent value="ads">
           <div className="flex flex-row gap-2">
