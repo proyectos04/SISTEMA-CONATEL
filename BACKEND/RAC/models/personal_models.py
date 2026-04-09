@@ -98,26 +98,26 @@ class DireccionGeneral(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     direccion_general = models.CharField(max_length=200, unique=True)
     dependenciaId = models.ForeignKey('Dependencias', models.DO_NOTHING,null=True, default=1, db_column='dependenciaId')
-    orden_by_direccion = models.PositiveIntegerField(default=30)
+   
 
     class Meta:
         
         managed = True
         db_table = 'DireccionGeneral'
-        ordering = ['orden_by_direccion']
+        ordering = ['Codigo']
         app_label = 'RAC'
     
 class DireccionLinea(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     direccion_linea = models.CharField(max_length=200, unique=True)
     direccionGeneral = models.ForeignKey('DireccionGeneral', models.DO_NOTHING, db_column='direccionGeneralId')
-    orden_by_direccion = models.PositiveIntegerField(default=30)
+ 
     
 
     class Meta:
         managed = True
         db_table = 'DireccionLinea'
-        ordering = ['orden_by_direccion']
+        ordering = ['Codigo']
         app_label = 'RAC'
 
 class Coordinaciones(models.Model):
@@ -125,11 +125,11 @@ class Coordinaciones(models.Model):
     coordinacion = models.CharField(max_length=200, unique=True)
     direccionLinea = models.ForeignKey('DireccionLinea', models.DO_NOTHING, null=True, blank=True,db_column='direccionLineaId')
     
-    orden_by_coordinacion = models.PositiveIntegerField(default=30)
+   
     class Meta:
         managed = True
         db_table = 'Coordinaciones'
-        ordering = ['orden_by_coordinacion']
+        ordering = ['Codigo']
         app_label = 'RAC'
 
 
