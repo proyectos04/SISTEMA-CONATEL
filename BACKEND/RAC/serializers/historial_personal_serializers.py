@@ -62,13 +62,11 @@ class MovimintoCargoSerializer(serializers.Serializer):
         # LIBERAR CARGO ACTUAL
         instance.employee = None
         instance.estatusid = estatus_vacante
-        instance._history_user = usuario
         instance.save()
 
         # OCUPAR NUEVO PUESTO
         puesto_nuevo.employee = empleado
         puesto_nuevo.estatusid = estatus_activo
-        puesto_nuevo._history_user = usuario
         puesto_nuevo.observaciones = motivo.movimiento
         puesto_nuevo.save()
 
@@ -116,7 +114,6 @@ class GestionStatusSerializer(BaseActionInputSerializer):
 
         instance.estatusid = nuevo_estatus
         instance.observaciones = motivo.movimiento
-        instance._history_user = usuario
         instance.save()
 
         registrar_historial_movimiento(
@@ -282,7 +279,6 @@ class GestionEgreso_PasivoSerializer(BaseActionInputSerializer):
                 estadoCivil=fam.estadoCivil,
                 fechaingresoorganismo=timezone.now().date(),
             )
-            nuevo_emp._history_user = usuario
             nuevo_emp.save()
 
             # Migración de Perfil Salud
@@ -328,7 +324,6 @@ class GestionEgreso_PasivoSerializer(BaseActionInputSerializer):
                 DireccionGeneral=dg_humana,
                 observaciones=f"Pensión sobreviviente derivada de C.I. {emp_origen.cedulaidentidad}"
             )
-            asig._history_user = usuario
             asig.save()
 
             registrar_historial_movimiento(nuevo_emp, asig, 'INGRESO', motivo_ingreso, usuario)
@@ -371,7 +366,7 @@ class GestionEgreso_PasivoSerializer(BaseActionInputSerializer):
             observaciones=f"Cargo pasivo generado. {motivo_obj.movimiento}"
         )
         
-        nueva_asig._history_user = usuario
+      
         nueva_asig.save()
 
         registrar_historial_movimiento(empleado, nueva_asig, 'CAMBIO_NOMINA', motivo_obj, usuario)
@@ -419,8 +414,6 @@ class GestionEgreso_PasivoSerializer(BaseActionInputSerializer):
             registrar_historial_movimiento(empleado, asig, 'EGRESO', motivo, usuario)
             
             asig.employee = None
-            asig.estatusid = estatus_vacante
-            asig._history_user = usuario
             asig.save()
 class CargoEgresadoSerializer(serializers.ModelSerializer):
     denominacioncargo = denominacionCargoSerializer(source='denominacioncargoid', read_only=True)

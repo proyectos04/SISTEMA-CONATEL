@@ -830,8 +830,6 @@ class CodigosCreateUpdateSerializer(CleanZerosMixin, serializers.ModelSerializer
     def create(self, validated_data):
         usuario = validated_data.pop('usuario_id')
         instance = AsigTrabajo.objects.create(**validated_data)
-      
-        instance._history_user = usuario
         instance.save()
             
         return instance
@@ -839,7 +837,6 @@ class CodigosCreateUpdateSerializer(CleanZerosMixin, serializers.ModelSerializer
     @transaction.atomic
     def update(self, instance, validated_data):
         usuario = validated_data.pop('usuario_id')
-        instance._history_user = usuario
         return super().update(instance, validated_data)
 
 
@@ -931,7 +928,6 @@ class EmployeeAssignmentSerializer(serializers.ModelSerializer):
 
         instance.employee = nuevo_empleado
         instance.estatusid = estatus_activo
-        instance._history_user = usuario
         instance.save()
 
         registrar_historial_movimiento(
@@ -1001,7 +997,6 @@ class SpecialPositionAutoCreateSerializer(CleanZerosMixin, serializers.ModelSeri
         validated_data['codigo'] = codigo
 
         instance = AsigTrabajo.objects.create(**validated_data)
-        instance._history_user = usuario
         instance.save()
 
         registrar_historial_movimiento(
