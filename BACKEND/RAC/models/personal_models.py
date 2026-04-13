@@ -92,21 +92,21 @@ class Niveles(models.Model):
         app_label = 'RAC'
 
 
-class DireccionGeneral(models.Model):
+class Direcciones(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
-    direccion_general = models.CharField(max_length=200, unique=True)
+    direccion = models.CharField(max_length=200, unique=True)
     Nivel= models.ForeignKey('Niveles', models.DO_NOTHING,null=True, default=1, db_column='NivelId')
 
     class Meta:
         managed = True
-        db_table = 'DireccionGeneral'
+        db_table = 'Direcciones'
         ordering = ['Codigo']
         app_label = 'RAC'
     
 class DireccionLinea(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     direccion_linea = models.CharField(max_length=200, unique=True)
-    direccionGeneral = models.ForeignKey('DireccionGeneral', models.DO_NOTHING, db_column='direccionGeneralId')
+    direccionGeneral = models.ForeignKey('Direcciones', models.DO_NOTHING, db_column='direccionGeneralId')
     class Meta:
         managed = True
         db_table = 'DireccionLinea'
@@ -394,7 +394,7 @@ class AsigTrabajo(models.Model):
     gradoid = models.ForeignKey('Grado', models.DO_NOTHING, db_column='gradoId', blank=True, null=True) 
     tiponominaid = models.ForeignKey('Tiponomina', models.DO_NOTHING, db_column='tipoNominaId')
     Nivel = models.ForeignKey('Niveles', models.DO_NOTHING, db_column='NivelId', blank=True,default=1, null=True)
-    Direccion = models.ForeignKey(DireccionGeneral,models.DO_NOTHING, db_column='direccionId', blank=True, null=True)
+    Direccion = models.ForeignKey(Direcciones,models.DO_NOTHING, db_column='direccionId', blank=True, null=True)
     DireccionLinea = models.ForeignKey(DireccionLinea, models.DO_NOTHING, db_column='direccionLineaId', blank=True, null=True)
     Coordinacion = models.ForeignKey(Coordinaciones, models.DO_NOTHING, db_column='coordinacionId', blank=True, null=True)
     estatusid = models.ForeignKey('Estatus', models.DO_NOTHING, db_column='estatusId') 
@@ -414,7 +414,7 @@ class AsigTrabajo(models.Model):
 class Cargos_DireccionGeneral(models.Model):
     
     Cargo =  models.ForeignKey('Denominacioncargo', models.DO_NOTHING, db_column='cargoId')
-    Direccion_general = models.ForeignKey(DireccionGeneral, models.DO_NOTHING, db_column='direccionGeneralId')
+    Direccion_general = models.ForeignKey(Direcciones, models.DO_NOTHING, db_column='direccionGeneralId')
     Cantidad_disponible = models.PositiveIntegerField()
   
     class Meta:
