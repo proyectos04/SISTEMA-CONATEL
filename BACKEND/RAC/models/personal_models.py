@@ -8,8 +8,7 @@ from . import ubicacion_models as direccion_models
 #importacion del modelo de familiares
 from .family_personal_models import Employeefamily
 
-# historial de cambios
-from simple_history.models import HistoricalRecords
+
 
 
 # cargos 
@@ -83,21 +82,20 @@ class Tiponomina(models.Model):
         
 
 
-class Dependencias(models.Model):
-    Codigo = models.CharField(max_length=20, unique=True)
-    dependencia = models.CharField(max_length=200, unique=True)
+class Niveles(models.Model):
+    nivel = models.CharField(max_length=200, unique=True)
 
     class Meta:
         managed = True
-        db_table = 'Dependencias'
-        ordering = ['Codigo']
+        db_table = 'Niveles'
+        ordering = ['id']
         app_label = 'RAC'
 
 
 class DireccionGeneral(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     direccion_general = models.CharField(max_length=200, unique=True)
-    dependenciaId = models.ForeignKey('Dependencias', models.DO_NOTHING,null=True, default=1, db_column='dependenciaId')
+    Nivel= models.ForeignKey('Niveles', models.DO_NOTHING,null=True, default=1, db_column='NivelId')
 
     class Meta:
         managed = True
@@ -395,8 +393,8 @@ class AsigTrabajo(models.Model):
     OrganismoAdscritoid = models.ForeignKey('OrganismoAdscrito', models.DO_NOTHING, db_column='organismoAdscritoId', blank=True, null=True)
     gradoid = models.ForeignKey('Grado', models.DO_NOTHING, db_column='gradoId', blank=True, null=True) 
     tiponominaid = models.ForeignKey('Tiponomina', models.DO_NOTHING, db_column='tipoNominaId')
-    Dependencia = models.ForeignKey('Dependencias', models.DO_NOTHING, db_column='dependenciaId', blank=True,default=1, null=True)
-    DireccionGeneral =  models.ForeignKey(DireccionGeneral, models.DO_NOTHING, db_column='direccionGeneralId', blank=True, null=True)
+    Nivel = models.ForeignKey('Niveles', models.DO_NOTHING, db_column='NivelId', blank=True,default=1, null=True)
+    Direccion = models.ForeignKey(DireccionGeneral,models.DO_NOTHING, db_column='direccionId', blank=True, null=True)
     DireccionLinea = models.ForeignKey(DireccionLinea, models.DO_NOTHING, db_column='direccionLineaId', blank=True, null=True)
     Coordinacion = models.ForeignKey(Coordinaciones, models.DO_NOTHING, db_column='coordinacionId', blank=True, null=True)
     estatusid = models.ForeignKey('Estatus', models.DO_NOTHING, db_column='estatusId') 

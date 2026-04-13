@@ -314,7 +314,7 @@ class ContactoEmergenciaSerializer(serializers.ModelSerializer):
 # DEPENDENCIAS
 class DependenciaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Dependencias
+        model = DireccionGeneral
         fields = '__all__'
     
     def validate_dependencia(self,value):

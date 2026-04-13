@@ -39,8 +39,8 @@ class EmployeeMovementHistory(models.Model):
     tiponomina = models.ForeignKey(Tiponomina, on_delete=models.PROTECT)
     estatus = models.ForeignKey(Estatus, on_delete=models.PROTECT)
     tipo_personal = models.ForeignKey(Tipo_personal, on_delete=models.PROTECT)
-    DependenciasId = models.ForeignKey(Dependencias, on_delete=models.PROTECT)
-    DireccionGeneralid = models.ForeignKey(DireccionGeneral, on_delete=models.PROTECT, null=True)
+    Nivel = models.ForeignKey(Niveles, db_column='NivelId',  on_delete=models.PROTECT, null=True)
+    Direccion= models.ForeignKey(DireccionGeneral,db_column='direccionId', on_delete=models.PROTECT, null=True)
     DireccionLineaid = models.ForeignKey(DireccionLinea, on_delete=models.PROTECT, null=True)
     Coordinacionid = models.ForeignKey(Coordinaciones, on_delete=models.PROTECT, null=True)
 
@@ -79,7 +79,6 @@ class EmployeeEgresado(models.Model):
     class Meta:
         managed = True
         db_table = 'EmployeeEgresado'
-        ordering = ['-fecha_egreso']
 
     @property
     def nombre_completo(self):
@@ -98,8 +97,8 @@ class CargoEgresado(models.Model):
     gradoid = models.ForeignKey(Grado, models.DO_NOTHING, db_column='gradoId', blank=True, null=True)
     tiponominaid = models.ForeignKey(Tiponomina, models.DO_NOTHING, db_column='tipoNominaId')
     TipoPersonalId = models.ForeignKey(Tipo_personal, models.DO_NOTHING, db_column='tipoPersonalId')
-    Dependencia =  models.ForeignKey(Dependencias, models.DO_NOTHING, db_column='dependenciaId')
-    DireccionGeneral = models.ForeignKey(DireccionGeneral, models.DO_NOTHING, db_column='direccionGeneralId', null=True)
+    Nivel = models.ForeignKey(Niveles,  models.DO_NOTHING, db_column='NivelId',)
+    Direccion= models.ForeignKey(DireccionGeneral,models.DO_NOTHING, db_column='direccionId', null=True)
     DireccionLinea = models.ForeignKey(DireccionLinea, models.DO_NOTHING, db_column='direccionLineaId', null=True)
     Coordinacion = models.ForeignKey(Coordinaciones, models.DO_NOTHING, db_column='coordinacionId', null=True)
     OrganismoAdscritoid = models.ForeignKey(OrganismoAdscrito, models.DO_NOTHING, db_column='organismoAdscritoId', null=True)
