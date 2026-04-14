@@ -33,15 +33,13 @@ type Values = [
   FormFormity<HealthType>,
   FormFormity<PhysicalProfileType>,
   FormFormity<DwellingType>,
-  FormFormity<FamilyEmployeeType>,
   ReturnFormity<
     BasicInfoType &
       AcademyType &
       BackgroundType &
       HealthType &
       PhysicalProfileType &
-      DwellingType &
-      FamilyEmployeeType
+      DwellingType
   >,
 ];
 
@@ -165,16 +163,7 @@ const schema: SchemaFormity<Values> = [
       ),
     },
   },
-  {
-    form: {
-      values: () => ({
-        familys: [[], []],
-      }),
-      render: ({ values, onNext }) => {
-        return <FormFamilyEmployee defaultValues={values} onSubmit={onNext} />;
-      },
-    },
-  },
+
   {
     return: (data) => {
       return data;

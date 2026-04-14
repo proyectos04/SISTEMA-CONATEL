@@ -90,7 +90,7 @@ class Dependencias(models.Model):
     class Meta:
         managed = True
         db_table = 'Dependencias'
-        ordering = ['id']
+        ordering = ['Codigo']
         app_label = 'RAC'
 
 
@@ -98,38 +98,31 @@ class DireccionGeneral(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     direccion_general = models.CharField(max_length=200, unique=True)
     dependenciaId = models.ForeignKey('Dependencias', models.DO_NOTHING,null=True, default=1, db_column='dependenciaId')
-    orden_by_direccion = models.PositiveIntegerField(default=30)
 
     class Meta:
-        
         managed = True
         db_table = 'DireccionGeneral'
-        ordering = ['orden_by_direccion']
+        ordering = ['Codigo']
         app_label = 'RAC'
     
 class DireccionLinea(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     direccion_linea = models.CharField(max_length=200, unique=True)
     direccionGeneral = models.ForeignKey('DireccionGeneral', models.DO_NOTHING, db_column='direccionGeneralId')
-    orden_by_direccion = models.PositiveIntegerField(default=30)
-    
-
     class Meta:
         managed = True
         db_table = 'DireccionLinea'
-        ordering = ['orden_by_direccion']
+        ordering = ['Codigo']
         app_label = 'RAC'
 
 class Coordinaciones(models.Model):
     Codigo = models.CharField(max_length=20, unique=True)
     coordinacion = models.CharField(max_length=200, unique=True)
     direccionLinea = models.ForeignKey('DireccionLinea', models.DO_NOTHING, null=True, blank=True,db_column='direccionLineaId')
-    
-    orden_by_coordinacion = models.PositiveIntegerField(default=30)
     class Meta:
         managed = True
         db_table = 'Coordinaciones'
-        ordering = ['orden_by_coordinacion']
+        ordering = ['Codigo']
         app_label = 'RAC'
 
 
@@ -378,17 +371,8 @@ class Employee(models.Model):
     correo = models.EmailField(blank=True, null=True)
     telefono_habitacion = models.CharField(max_length=20, blank=True, null=True)
     telefono_movil = models.CharField(max_length=20, blank=True, null=True)
-    
-    historial  = HistoricalRecords(user_model=cuenta,excluded_fields=['total_anos_apn'])
     fecha_actualizacion = models.DateTimeField(auto_now=True) 
-    
-    @property
-    def _history_user(self):
-        return self.changed_by
 
-    @_history_user.setter
-    def _history_user(self, value):
-        self.changed_by = value
     class Meta:
         managed = True
         db_table = 'Employee'
@@ -418,19 +402,8 @@ class AsigTrabajo(models.Model):
     estatusid = models.ForeignKey('Estatus', models.DO_NOTHING, db_column='estatusId') 
     Tipo_personal = models.ForeignKey('Tipo_personal', models.DO_NOTHING, db_column='tipoPersonalId', blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
-    historial  = HistoricalRecords(user_model=cuenta)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
-    
-    @property
-    def _history_user(self):
-        return self.changed_by
 
-    @_history_user.setter
-    def _history_user(self, value):
-        self.changed_by = value
-        
-        
-  
     class Meta:
         managed = True
         db_table = 'AsigTrabajo'

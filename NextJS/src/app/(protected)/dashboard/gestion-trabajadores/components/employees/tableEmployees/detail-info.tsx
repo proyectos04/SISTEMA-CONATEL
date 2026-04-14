@@ -47,7 +47,7 @@ interface Props {
 export default function DetailInfoEmployee({ employee }: Props) {
   const { data: profileBlob } = useSWR(
     employee.cedulaidentidad ? ["profile", employee.cedulaidentidad] : null,
-    () => imageProfileFn(employee.cedulaidentidad),
+    () => imageProfileFn(employee.cedulaidentidad)
   );
   const imageUrl = useMemo(() => {
     if (!profileBlob) return "/bg.png";
@@ -129,17 +129,17 @@ export default function DetailInfoEmployee({ employee }: Props) {
                         <div>{v.denominacioncargoespecifico.cargo}</div>
                         <div>Tipo De Nomina:</div>
                         <div>{v.tiponomina.nomina}</div>
-                        <div>Dependencia:</div>
+                        <div>Organización:</div>
                         <div>
                           {v.Dependencia ? v.Dependencia.dependencia : "N/A"}
                         </div>
-                        <div>Dirección General:</div>
+                        <div>Dirección / Gerencia / Oficina:</div>
                         <div>
                           {v.DireccionGeneral
                             ? v.DireccionGeneral.direccion_general
                             : "N/A"}
                         </div>
-                        <div>Dirección De Linea:</div>
+                        <div>División / Coordinación:</div>
                         <div>
                           {v.DireccionLinea
                             ? v.DireccionLinea?.direccion_linea
@@ -197,7 +197,7 @@ export default function DetailInfoEmployee({ employee }: Props) {
                           idEmployee={employee.id.toString()}
                           defaultValues={{
                             fechaingresoorganismo: new Date(
-                              employee.fechaingresoorganismo,
+                              employee.fechaingresoorganismo
                             ),
                             antecedentes:
                               employee.antecedentes?.map((ant) => ({
@@ -241,7 +241,7 @@ export default function DetailInfoEmployee({ employee }: Props) {
                                 ? formatInTimeZone(
                                     new Date(v.fecha_ingreso),
                                     "UTC",
-                                    "dd/MM/yyyy",
+                                    "dd/MM/yyyy"
                                   )
                                 : "N/A"}
                             </TableCell>
@@ -250,7 +250,7 @@ export default function DetailInfoEmployee({ employee }: Props) {
                                 ? formatInTimeZone(
                                     new Date(v.fecha_egreso),
                                     "UTC",
-                                    "dd/MM/yyyy",
+                                    "dd/MM/yyyy"
                                   )
                                 : "Presente"}
                             </TableCell>
@@ -285,7 +285,7 @@ export default function DetailInfoEmployee({ employee }: Props) {
                     idEmployee={employee.id.toString()}
                     defaultValues={{
                       fechaingresoorganismo: new Date(
-                        employee.fechaingresoorganismo,
+                        employee.fechaingresoorganismo
                       ),
                       antecedentes:
                         employee.antecedentes?.map((ant) => ({
@@ -481,19 +481,19 @@ export default function DetailInfoEmployee({ employee }: Props) {
                           perfil_salud: {
                             grupoSanguineo: Number(
                               employee.perfil_salud?.grupoSanguineo?.id ??
-                                employee.perfil_salud?.grupoSanguineo,
+                                employee.perfil_salud?.grupoSanguineo
                             ),
                             patologiaCronica:
                               employee.perfil_salud?.patologiasCronicas?.map(
-                                (p) => p.id,
+                                (p) => p.id
                               ) ?? [],
                             discapacidad:
                               employee.perfil_salud?.discapacidad?.map(
-                                (d) => d.id,
+                                (d) => d.id
                               ) ?? [],
                             alergias:
                               employee.perfil_salud?.alergias?.map(
-                                (d) => d.id,
+                                (d) => d.id
                               ) ?? [],
                           },
                         }}
@@ -531,7 +531,7 @@ export default function DetailInfoEmployee({ employee }: Props) {
                                 </TableCell>
                                 <TableCell>{v.patologia}</TableCell>
                               </TableRow>
-                            ),
+                            )
                           )}
                         </TableBody>
                       </Table>

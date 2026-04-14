@@ -15,6 +15,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { formatInTimeZone } from "date-fns-tz";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import UpdateCode from "./detail-info";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 export const columnsCode: ColumnDef<Code>[] = [
   {
     accessorKey: "codigo",
@@ -60,37 +65,88 @@ export const columnsCode: ColumnDef<Code>[] = [
       return orgAds;
     },
   },
-  {
-    accessorKey: "Dependencia.dependencia",
-    id: "Dependencia",
-    header: "Dependencia",
-  },
+
   {
     accessorKey: "DireccionGeneral.direccion_general",
-    id: "Dirección General",
-    header: "Dirección General",
+    id: "Dirección / Gerencia / Oficina",
+    header: "D / G / O ",
     cell: ({ getValue }) => {
-      const directionGeneral = getValue();
-      if (!directionGeneral) return "N/A";
-      return directionGeneral;
+      const directionGeneral = getValue() as string;
+      if (!directionGeneral)
+        return (
+          <Button variant={"destructive"} className="w-full">
+            N/A
+          </Button>
+        );
+      return (
+        <>
+          <div>
+            <HoverCard openDelay={10} closeDelay={100}>
+              <HoverCardTrigger asChild>
+                <Button className="w-full">Mostrar</Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="flex w-64 flex-col gap-0.5">
+                <div className="font-semibold">{directionGeneral}</div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </>
+      );
     },
   },
   {
     accessorKey: "DireccionLinea.direccion_linea",
-    header: "Dirección De Linea",
+    header: "División ",
+    id: "División / Coordinación",
     cell: ({ getValue }) => {
-      const dirLine = getValue();
-      if (!dirLine) return "N/A";
-      return dirLine;
+      const dirLine = getValue() as string;
+      if (!dirLine)
+        return (
+          <Button variant={"destructive"} className="w-full">
+            N/A
+          </Button>
+        );
+      return (
+        <>
+          <div>
+            <HoverCard openDelay={10} closeDelay={100}>
+              <HoverCardTrigger asChild>
+                <Button className="w-full">Mostrar</Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="flex w-64 flex-col gap-0.5">
+                <div className="font-semibold">{dirLine}</div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </>
+      );
     },
   },
   {
     accessorKey: "Coordinacion.coordinacion",
     header: "Coordinación",
     cell: ({ getValue }) => {
-      const coord = getValue();
-      if (!coord) return "N/A";
-      return coord;
+      const coord = getValue() as string;
+      if (!coord)
+        return (
+          <Button variant={"destructive"} className="w-full">
+            N/A
+          </Button>
+        );
+      return (
+        <>
+          <div>
+            <HoverCard openDelay={10} closeDelay={100}>
+              <HoverCardTrigger asChild>
+                <Button className="w-full">Mostrar</Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="flex w-64 flex-col gap-0.5">
+                <div className="font-semibold">{coord}</div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </>
+      );
     },
   },
   {

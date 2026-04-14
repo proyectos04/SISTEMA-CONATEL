@@ -151,7 +151,7 @@ class GraduatePDFGenerator(BasePDFGenerator):
         for dep_nombre in sorted(agrupacion.keys()):
             # --- CAMBIO CLAVE: Agrupar el título de Dep con el primer bloque de Dirección ---
             dep_elements = []
-            titulo_dep_parts = create_section_title(f"DEPENDENCIA: {dep_nombre.upper()}")
+            titulo_dep_parts = create_section_title(f"ORGANISMO: {dep_nombre.upper()}")
             for part in titulo_dep_parts:
                 if isinstance(part, Paragraph):
                     part.keepWithNext = True # Indica que no debe haber salto de página después

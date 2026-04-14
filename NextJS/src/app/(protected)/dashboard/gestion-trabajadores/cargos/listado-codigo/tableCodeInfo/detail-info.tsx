@@ -62,40 +62,40 @@ export default function UpdateCode({ code }: Props) {
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: organismoAds, isLoading: isLoadingOrganismoAds } = useSWR(
     "organismoAds",
-    async () => await getOrganismosAds(),
+    async () => await getOrganismosAds()
   );
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     selecteIdDirectionGeneral
       ? ["directionLine", selecteIdDirectionGeneral]
       : "",
-    async () => await getDirectionLine(selecteIdDirectionGeneral!),
+    async () => await getDirectionLine(selecteIdDirectionGeneral!)
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     selecteIdDirectionLine ? ["coordination", selecteIdDirectionLine] : null,
-    async () => await getCoordination(selecteIdDirectionLine!),
+    async () => await getCoordination(selecteIdDirectionLine!)
   );
   const { data: cargoEspecifico, isLoading: isLoadingCargoEspecifico } = useSWR(
     "cargoEspecifico",
-    async () => await getCargoEspecifico(),
+    async () => await getCargoEspecifico()
   );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: cargo, isLoading: isLoadingCargo } = useSWR(
     "cargo",
-    async () => await getCargo(),
+    async () => await getCargo()
   );
   const { data: nomina, isLoading: isLoadingNomina } = useSWR(
     "nominaGeneral",
-    async () => await getNominaGeneral(),
+    async () => await getNominaGeneral()
   );
   const { data: grado, isLoading: isLoadingGrado } = useSWR("grado", async () =>
-    getGrado(),
+    getGrado()
   );
   const form = useForm({
     defaultValues: {
@@ -160,7 +160,11 @@ export default function UpdateCode({ code }: Props) {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingCargo ? "Cargando Denominaciones De Cargo" : "Seleccione una Denominación De Cargo"}`}
+                                placeholder={`${
+                                  isLoadingCargo
+                                    ? "Cargando Denominaciones De Cargo"
+                                    : "Seleccione una Denominación De Cargo"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -191,7 +195,11 @@ export default function UpdateCode({ code }: Props) {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingCargoEspecifico ? "Cargando Cargos Especificos" : "Seleccione una Denominación De Cargo Específico"}`}
+                                placeholder={`${
+                                  isLoadingCargoEspecifico
+                                    ? "Cargando Cargos Especificos"
+                                    : "Seleccione una Denominación De Cargo Específico"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -222,7 +230,11 @@ export default function UpdateCode({ code }: Props) {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingNomina ? "Cargando Nominas" : "Seleccione un Tipo de Nómina"}`}
+                                placeholder={`${
+                                  isLoadingNomina
+                                    ? "Cargando Nominas"
+                                    : "Seleccione un Tipo de Nómina"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -253,7 +265,11 @@ export default function UpdateCode({ code }: Props) {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingGrado ? "Cargando Grados" : "Seleccione un Grado"}`}
+                                placeholder={`${
+                                  isLoadingGrado
+                                    ? "Cargando Grados"
+                                    : "Seleccione un Grado"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -283,7 +299,11 @@ export default function UpdateCode({ code }: Props) {
                           <FormControl>
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingGrado ? "Cargando Organismos Adscritos" : "Seleccione Un Organismo Adscrito"}`}
+                                placeholder={`${
+                                  isLoadingGrado
+                                    ? "Cargando Organismos Adscritos"
+                                    : "Seleccione Un Organismo Adscrito"
+                                }`}
                               />
                             </SelectTrigger>
                           </FormControl>
@@ -307,7 +327,7 @@ export default function UpdateCode({ code }: Props) {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem className="truncate">
-                        <FormLabel>Dependencia</FormLabel>
+                        <FormLabel>Organización</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
@@ -323,9 +343,7 @@ export default function UpdateCode({ code }: Props) {
                             <SelectContent>
                               <SelectContent>
                                 <SelectGroup>
-                                  <SelectLabel>
-                                    Direcciones De Generales
-                                  </SelectLabel>
+                                  <SelectLabel>Organización</SelectLabel>
                                   {dependency?.data.map((dp, i) => (
                                     <SelectItem key={i} value={`${dp.id}`}>
                                       {dp.Codigo}-{dp.dependencia}
@@ -344,7 +362,7 @@ export default function UpdateCode({ code }: Props) {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem className="truncate">
-                        <FormLabel>Dirección General</FormLabel>
+                        <FormLabel>Dirección / Gerencia / Oficina</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
@@ -354,7 +372,11 @@ export default function UpdateCode({ code }: Props) {
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue
-                                placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccionar Dirección General"}`}
+                                placeholder={`${
+                                  isLoadingDirectionGeneral
+                                    ? "Cargando Direcciones Generales"
+                                    : "Seleccionar Dirección General"
+                                }`}
                               />
                             </SelectTrigger>
                             <SelectContent>
@@ -379,7 +401,7 @@ export default function UpdateCode({ code }: Props) {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dirección De Linea / Coordinacion</FormLabel>
+                        <FormLabel>División / Coordinación</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
@@ -389,7 +411,11 @@ export default function UpdateCode({ code }: Props) {
                           >
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={` ${isLoadingDirectionLine ? "Cargando Direcciones de Linea" : "Seleccionar Direcciones De Linea"}`}
+                                placeholder={` ${
+                                  isLoadingDirectionLine
+                                    ? "Cargando Direcciones de Linea"
+                                    : "Seleccionar Direcciones De Linea"
+                                }`}
                               />
                             </SelectTrigger>
                             <SelectContent>
@@ -421,7 +447,11 @@ export default function UpdateCode({ code }: Props) {
                           >
                             <SelectTrigger className="w-full truncate">
                               <SelectValue
-                                placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccionar Coordinación"} `}
+                                placeholder={`${
+                                  isLoadingCoordination
+                                    ? "Cargando Coordinaciones"
+                                    : "Seleccionar Coordinación"
+                                } `}
                               />
                             </SelectTrigger>
                             <SelectContent>

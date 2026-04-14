@@ -126,22 +126,22 @@ const items: MenuItem[] = [
       roleAccept: ["ADMINISTRADOR"],
       departmentAccept: ["RAC"],
     },
-    title: "Dependencias",
+    title: "Ub. Administrativas",
     url: "#",
     icon: SignpostBig,
     subMenu: [
-      {
-        title: "Crear Dependencia",
-        url: "/dashboard/gestion-trabajadores/dependencias/crear-dependencia",
-        icon: ArrowRightFromLine,
-        permission: {
-          roleAccept: ["ADMINISTRADOR"],
-          departmentAccept: ["RAC"],
-        },
-      },
+      // {
+      //   title: "Crear Ub. Administrativa",
+      //   url: "/dashboard/gestion-trabajadores/ubicacion-administrativa/crear-ubicacion",
+      //   icon: ArrowRightFromLine,
+      //   permission: {
+      //     roleAccept: ["ADMINISTRADOR"],
+      //     departmentAccept: ["RAC"],
+      //   },
+      // },
       {
         title: "Crear Direcciones",
-        url: "/dashboard/gestion-trabajadores/dependencias/crear-dependencia-direccion",
+        url: "/dashboard/gestion-trabajadores/ubicacion-administrativa/crear-ubicacion-administrativa-direccion",
         icon: MoveDownRight,
         permission: {
           roleAccept: ["ADMINISTRADOR"],
@@ -149,8 +149,8 @@ const items: MenuItem[] = [
         },
       },
       {
-        title: "Consultar Dependencias",
-        url: "/dashboard/gestion-trabajadores/dependencias/listado-dependencia",
+        title: "Consultar Ub. Admnistrativas",
+        url: "/dashboard/gestion-trabajadores/ubicacion-administrativa/listado-ubicacion-administrativa",
         icon: List,
         permission: {
           roleAccept: ["ADMINISTRADOR"],
@@ -158,8 +158,8 @@ const items: MenuItem[] = [
         },
       },
       {
-        title: "Actualizar Dependencias",
-        url: "/dashboard/gestion-trabajadores/dependencias/actualizar-dependencia",
+        title: "Actualizar Ub. Admnistrativas",
+        url: "/dashboard/gestion-trabajadores/ubicacion-administrativa/actualizar-ubicacion",
         icon: Boxes,
         permission: {
           roleAccept: ["ADMINISTRADOR"],
@@ -331,11 +331,11 @@ export function AppSidebarEmployees() {
     if (!item.permission) return true;
 
     const hasRolePermission = item.permission.roleAccept.includes(
-      session?.user.role.nombre_rol || "",
+      session?.user.role.nombre_rol || ""
     );
 
     const hasDepartmentPermission = item.permission.departmentAccept.includes(
-      session?.user.department.nombre_departamento || "",
+      session?.user.department.nombre_departamento || ""
     );
 
     return hasRolePermission && hasDepartmentPermission;
@@ -353,7 +353,7 @@ export function AppSidebarEmployees() {
     .map((item) => {
       if (item.subMenu) {
         const filteredSubMenu = item.subMenu.filter((subItem) =>
-          checkPermission(subItem),
+          checkPermission(subItem)
         );
         return {
           ...item,

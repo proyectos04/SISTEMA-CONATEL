@@ -3,7 +3,7 @@ import PageLayout from "../../../../../../components/layout/page-layout";
 
 export default function ListDependencys() {
   return (
-    <PageLayout title="Listado De Dependencias">
+    <PageLayout title="Listado De Ubicaciones Administrativas">
       <TableDependencys />
     </PageLayout>
   );

@@ -14,8 +14,7 @@ export async function registerEmployeeSteps(
     BackgroundType &
     HealthType &
     PhysicalProfileType &
-    DwellingType &
-    FamilyEmployeeType,
+    DwellingType,
 ) {
   try {
     const session = await auth();
@@ -42,7 +41,6 @@ export async function registerEmployeeSteps(
       perfil_salud,
       sexoid,
       antecedentes,
-      familys,
     } = data;
     const payloadEmployee = {
       apellidos,
@@ -60,14 +58,6 @@ export async function registerEmployeeSteps(
       sexoid,
       usuario_id: userId,
       antecedentes,
-    };
-
-    const payloadFamily = {
-      familys: familys?.map((familiar) => ({
-        ...familiar,
-        usuario_id: userId,
-        employeecedula: cedulaidentidad,
-      })),
     };
 
     const response = await fetch(
@@ -94,27 +84,15 @@ export async function registerEmployeeSteps(
       },
     );
 
-    const responseFamily = await fetch(
-      `${process.env.NEXT_PUBLIC_DJANGO_API_URL_SERVER}Employeefamily/masivo/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payloadFamily.familys),
-      },
-    );
-    const getFamily: ApiResponse<never> = await responseFamily.json();
     return {
-      success: response.ok && responseFamily.ok,
+      success: response.ok,
       message:
-        response.ok && responseFamily.ok && responseNestjs.ok
+        response.ok && responseNestjs.ok
           ? getEmployee.message
-          : getEmployee.message ||
-            getFamily.message ||
-            "Error al registrar empleado",
+          : getEmployee.message || "Error al registrar empleado",
     };
-  } catch {
+  } catch (e) {
+    console.log(e);
     return {
       success: false,
       message: "Ocurrio Un Error ",

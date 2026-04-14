@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const schemaUpgradeDireccionGeneralCoord = z.object({
+export const schemaUpgradeDireccionLineCoord = z.object({
   Codigo: z
     .string({
       required_error: "Este Campo Es Requerido",
@@ -11,7 +11,7 @@ export const schemaUpgradeDireccionGeneralCoord = z.object({
     .refine((v) => Number.parseInt(v), {
       message: "Debe Ingresar Numeros",
     }),
-  direccion_general: z
+  direccion_linea: z
     .string({
       required_error: "Este Campo Es Requerido",
     })
@@ -25,15 +25,23 @@ export const schemaUpgradeDireccionGeneralCoord = z.object({
     .min(1, {
       message: "Debe Seleccionar Una Depedencia",
     }),
+  direccionGeneral: z.coerce
+    .number({
+      invalid_type_error: "Información Invalida",
+    })
+    .min(1, {
+      message: "Debe Seleccionar Una Dirección / Gerencia / Oficina",
+    }),
   id: z.coerce
     .number({
       invalid_type_error: "Información Invalida",
     })
     .min(1, {
-      message: "Debe Seleccionar Una Dirección General / Coordinación Adscrita",
+      message:
+        "Debe Seleccionar Una Direccion De Linea / Coordinación De Linea",
     }),
 });
 
-export type SchemaUpgradeDireccionGeneralCoord = z.infer<
-  typeof schemaUpgradeDireccionGeneralCoord
+export type SchemaUpgradeDireccionLineCoord = z.infer<
+  typeof schemaUpgradeDireccionLineCoord
 >;

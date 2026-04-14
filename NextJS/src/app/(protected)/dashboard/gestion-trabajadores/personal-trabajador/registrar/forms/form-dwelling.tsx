@@ -239,7 +239,9 @@ export default function FormDwelling({ onSubmit, defaultValues }: Props) {
                     </FormItem>
                   )}
                 />
-                <Button className="w-full col-span-2">Siguiente</Button>
+                <Button className="w-full col-span-2">
+                  Registrar Trabajador
+                </Button>
               </form>
             </Form>
           </div>

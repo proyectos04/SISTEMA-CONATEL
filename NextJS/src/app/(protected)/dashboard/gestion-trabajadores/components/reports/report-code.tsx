@@ -55,49 +55,49 @@ export default function ReportCode() {
   const [dependencyId, setDependencyId] = useState<number>(0);
   const { data: statusNomina, isLoading: isLoadingStatusNomina } = useSWR(
     "statusReport",
-    async () => await getStatusReport(),
+    async () => await getStatusReport()
   );
   const [directionGeneralId, setDirectionGeneralId] = useState<string | null>(
-    null,
+    null
   );
   const [directionLineId, setDirectionLineId] = useState<string | null>(null);
 
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     directionGeneralId ? ["directionLine", directionGeneralId] : null,
-    async () => await getDirectionLine(directionGeneralId!),
+    async () => await getDirectionLine(directionGeneralId!)
   );
   const { data: coordination, isLoading: isLoadingCoordination } = useSWR(
     directionLineId ? ["coordination", directionLineId] : null,
-    async () => await getCoordination(directionLineId!),
+    async () => await getCoordination(directionLineId!)
   );
 
   const { data: cargoEspecifico, isLoading: isLoadingCargoEspecifico } = useSWR(
     "cargoEspecifico",
-    async () => await getCargoEspecifico(),
+    async () => await getCargoEspecifico()
   );
   const { data: cargo, isLoading: isLoadingCargo } = useSWR(
     "cargo",
-    async () => await getCargo(),
+    async () => await getCargo()
   );
   const { data: nomina, isLoading: isLoadingNomina } = useSWR(
     "nomina",
-    async () => await getNominaGeneral(),
+    async () => await getNominaGeneral()
   );
   const { data: grado, isLoading: isLoadingGrado } = useSWR("grado", async () =>
-    getGrado(),
+    getGrado()
   );
   const { data: organismoAds, isLoading: isLoadingOrganismoAds } = useSWR(
     "organismoAds",
-    async () => await getOrganismosAdsFather(),
+    async () => await getOrganismosAdsFather()
   );
 
   const form = useForm({
@@ -184,7 +184,7 @@ export default function ReportCode() {
                           name="filtros.dependencia_id"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Dependencia</FormLabel>
+                              <FormLabel>Organización</FormLabel>
                               <Select
                                 onValueChange={(values) => {
                                   field.onChange(Number.parseInt(values));
@@ -194,7 +194,11 @@ export default function ReportCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDependency ? "Cargando Depedencias" : "Seleccione una Dependencia"}`}
+                                      placeholder={`${
+                                        isLoadingDependency
+                                          ? "Cargando Depedencias"
+                                          : "Seleccione una Dependencia"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -220,7 +224,7 @@ export default function ReportCode() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                Dirección General / Coordinación
+                                Dirección / Gerencia / Oficina
                               </FormLabel>
                               <Select
                                 onValueChange={(values) => {
@@ -231,7 +235,11 @@ export default function ReportCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccione una Dirección General"}`}
+                                      placeholder={`${
+                                        isLoadingDirectionGeneral
+                                          ? "Cargando Direcciones"
+                                          : "Seleccione una Dirección"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -253,9 +261,7 @@ export default function ReportCode() {
                           name="filtros.linea_id"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>
-                                Dirección De Linea / Coordinación
-                              </FormLabel>
+                              <FormLabel>División / Coordinación</FormLabel>
                               <Select
                                 onValueChange={(values) => {
                                   field.onChange(Number.parseInt(values));
@@ -265,7 +271,11 @@ export default function ReportCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingDirectionLine ? "Cargando Direcciones De Linea" : "Seleccione una Dirección De Linea"}`}
+                                      placeholder={`${
+                                        isLoadingDirectionLine
+                                          ? "Cargando Dirección"
+                                          : "Seleccione una Dirección"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -295,7 +305,11 @@ export default function ReportCode() {
                                 <FormControl>
                                   <SelectTrigger className="w-full truncate">
                                     <SelectValue
-                                      placeholder={`${isLoadingCoordination ? "Cargando Coordinaciones" : "Seleccione una Coordinación"}`}
+                                      placeholder={`${
+                                        isLoadingCoordination
+                                          ? "Cargando Coordinaciones"
+                                          : "Seleccione una Coordinación"
+                                      }`}
                                     />
                                   </SelectTrigger>
                                 </FormControl>
@@ -335,7 +349,11 @@ export default function ReportCode() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingCargoEspecifico ? "Cargando Cargos Especificos" : "Seleccione una Denominación De Cargo Específico"}`}
+                                    placeholder={`${
+                                      isLoadingCargoEspecifico
+                                        ? "Cargando Cargos Especificos"
+                                        : "Seleccione una Denominación De Cargo Específico"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -365,7 +383,11 @@ export default function ReportCode() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingCargo ? "Cargando Denominaciones De Cargo" : "Seleccione una Denominación De Cargo"}`}
+                                    placeholder={`${
+                                      isLoadingCargo
+                                        ? "Cargando Denominaciones De Cargo"
+                                        : "Seleccione una Denominación De Cargo"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -395,7 +417,11 @@ export default function ReportCode() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingNomina ? "Cargando Nominas" : "Seleccione un Tipo de Nomina"}`}
+                                    placeholder={`${
+                                      isLoadingNomina
+                                        ? "Cargando Nominas"
+                                        : "Seleccione un Tipo de Nomina"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -425,7 +451,11 @@ export default function ReportCode() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingGrado ? "Cargando Grados" : "Seleccione un Grado"}`}
+                                    placeholder={`${
+                                      isLoadingGrado
+                                        ? "Cargando Grados"
+                                        : "Seleccione un Grado"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -455,7 +485,11 @@ export default function ReportCode() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingGrado ? "Cargando Organismos Adscritos" : "Seleccione Un Organismo Adscrito"}`}
+                                    placeholder={`${
+                                      isLoadingGrado
+                                        ? "Cargando Organismos Adscritos"
+                                        : "Seleccione Un Organismo Adscrito"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -486,7 +520,11 @@ export default function ReportCode() {
                               <FormControl>
                                 <SelectTrigger className="w-full truncate">
                                   <SelectValue
-                                    placeholder={`${isLoadingStatusNomina ? "Cargando Estatus De Codigos" : "Seleccione Un Código"}`}
+                                    placeholder={`${
+                                      isLoadingStatusNomina
+                                        ? "Cargando Estatus De Codigos"
+                                        : "Seleccione Un Código"
+                                    }`}
                                   />
                                 </SelectTrigger>
                               </FormControl>
@@ -516,8 +554,14 @@ export default function ReportCode() {
                 {reportListCode && (
                   <a
                     href={reportListCode}
-                    download={`Reporte_Cargos ${formatInTimeZone(new Date(), "UTC", "dd/MM/yyyy")}.pdf`}
-                    className={`${buttonVariants({ variant: "outline" })} flex-1 cursor-pointer animate-pulse`}
+                    download={`Reporte_Cargos ${formatInTimeZone(
+                      new Date(),
+                      "UTC",
+                      "dd/MM/yyyy"
+                    )}.pdf`}
+                    className={`${buttonVariants({
+                      variant: "outline",
+                    })} flex-1 cursor-pointer animate-pulse`}
                   >
                     Descargar Reporte
                     <Download />

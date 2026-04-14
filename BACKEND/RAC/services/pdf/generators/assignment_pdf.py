@@ -137,17 +137,17 @@ class AssignmentPDFGenerator(BasePDFGenerator):
                         # BLOQUE DE TÍTULOS
                         titulos_bloque = []
                         if dep_nom != impreso_dep:
-                            titulos_bloque.extend(create_section_title(f"DEPENDENCIA: {dep_nom.upper()}"))
+                            titulos_bloque.extend(create_section_title(f"ORGANISMO: {dep_nom.upper()}"))
                             impreso_dep = dep_nom
                             impreso_dg, impreso_dl = None, None
 
                         if dg_nom != impreso_dg and dg_nom.upper().strip() not in ignorar_titulos:
-                            titulos_bloque.extend(create_section_title(f"  > DG / COORD: {dg_nom.upper()}"))
+                            titulos_bloque.extend(create_section_title(f"  > DG / GEREN / OFIC: {dg_nom.upper()}"))
                             impreso_dg = dg_nom
                             impreso_dl = None
 
                         if dl_nom != impreso_dl and dl_nom.upper().strip() not in ignorar_titulos:
-                            titulos_bloque.extend(create_section_title(f"    - DL / COORD: {dl_nom.upper()}"))
+                            titulos_bloque.extend(create_section_title(f"    - DIV / COORD: {dl_nom.upper()}"))
                             impreso_dl = dl_nom
                         
                         if coord_nom.upper().strip() not in ignorar_titulos:

@@ -3,17 +3,8 @@ import { Family } from "@/app/types/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   SheetContentUI,
   SheetHeaderUI,
@@ -31,21 +22,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
-import {
-  Ambulance,
-  GraduationCap,
-  Heart,
-  PersonStanding,
-  ShipIcon,
-  ShipWheel,
-  Shirt,
-} from "lucide-react";
-import UpdateBasicInfoFamily from "./updateInfo/form/form-update-info";
-import FormRelationship from "./updateInfo/form/form-relationship";
-import UpdateFormPhysical from "./updateInfo/form/form-physical-update";
+import { GraduationCap, Heart, PersonStanding, Shirt } from "lucide-react";
 import UpdateFormAcademy from "./updateInfo/form/form-academy-update";
 import FormUpdateHealthFamily from "./updateInfo/form/form-health_profile";
+import UpdateFormPhysical from "./updateInfo/form/form-physical-update";
+import FormRelationship from "./updateInfo/form/form-relationship";
+import UpdateBasicInfoFamily from "./updateInfo/form/form-update-info";
 interface Props {
   family: Family;
 }
@@ -94,7 +76,7 @@ export function DetailInfoFamily({ family }: Props) {
                   <span>
                     {format(
                       new Date(family.fechanacimiento).toISOString(),
-                      "dd/MM/yyyy",
+                      "dd/MM/yyyy"
                     )}
                   </span>
                   <span>Sexo</span>
@@ -282,7 +264,7 @@ export function DetailInfoFamily({ family }: Props) {
                               </TableCell>
                               <TableCell>{v.patologia}</TableCell>
                             </TableRow>
-                          ),
+                          )
                         )}
                       </TableBody>
                     </Table>
@@ -308,7 +290,7 @@ export function DetailInfoFamily({ family }: Props) {
                               </TableCell>
                               <TableCell>{v.discapacidad}</TableCell>
                             </TableRow>
-                          ),
+                          )
                         )}
                       </TableBody>
                     </Table>

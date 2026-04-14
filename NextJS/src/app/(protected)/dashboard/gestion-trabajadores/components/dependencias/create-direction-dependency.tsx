@@ -3,10 +3,10 @@ import {
   schemaCreateCoordinationDirection,
   schemaCreateDirectionGeneralDp,
   schemaCreateDirectionLineDirection,
-} from "@/app/(protected)/dashboard/gestion-trabajadores/dependencias/crear-dependencia-direccion/schema/schemaCreateDirectionDependency";
+} from "@/app/(protected)/dashboard/gestion-trabajadores/ubicacion-administrativa/crear-ubicacion-administrativa-direccion/schema/schemaCreateDirectionDependency";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent } from "../../../../../../components/ui/card";
 
@@ -14,12 +14,7 @@ import {
   createDirectionCordination,
   createDirectionGeneral,
   createDirectionLine,
-} from "@/app/(protected)/dashboard/gestion-trabajadores/dependencias/crear-dependencia-direccion/action/createDirectionDependecy";
-import {
-  ApiResponse,
-  DirectionGeneral,
-  DirectionLine,
-} from "@/app/types/types";
+} from "@/app/(protected)/dashboard/gestion-trabajadores/ubicacion-administrativa/crear-ubicacion-administrativa-direccion/action/createDirectionDependecy";
 import {
   Select,
   SelectContent,
@@ -30,14 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import useSWR from "swr";
 import z from "zod";
-import {
-  getDependency,
-  getDirectionGeneral,
-  getDirectionGeneralById,
-  getDirectionLine,
-} from "../../api/getInfoRac";
-import Loading from "../loading/loading";
 import { Button } from "../../../../../../components/ui/button";
 import {
   Form,
@@ -49,7 +38,12 @@ import {
 } from "../../../../../../components/ui/form";
 import { Input } from "../../../../../../components/ui/input";
 import { Label } from "../../../../../../components/ui/label";
-import useSWR from "swr";
+import {
+  getDependency,
+  getDirectionGeneralById,
+  getDirectionLine,
+} from "../../api/getInfoRac";
+import Loading from "../loading/loading";
 
 export default function FormCreateDirectionDependency() {
   const [isPending, startTransition] = useTransition();
@@ -85,22 +79,22 @@ export default function FormCreateDirectionDependency() {
   });
   const { data: dependency, isLoading: isLoadingDependency } = useSWR(
     "dependency",
-    async () => await getDependency(),
+    async () => await getDependency()
   );
   const { data: directionGeneral, isLoading: isLoadingDirectionGeneral } =
     useSWR(
       dependencyId ? ["directionGeneral", dependencyId] : null,
-      async () => await getDirectionGeneralById(dependencyId),
+      async () => await getDirectionGeneralById(dependencyId)
     );
 
   const { data: directionLine, isLoading: isLoadingDirectionLine } = useSWR(
     selectionDirectionGeneralId
       ? ["directionLine", selectionDirectionGeneralId]
       : null,
-    async () => await getDirectionLine(selectionDirectionGeneralId!),
+    async () => await getDirectionLine(selectionDirectionGeneralId!)
   );
   const onSubmitDirectionGeneral = (
-    values: z.infer<typeof schemaCreateDirectionGeneralDp>,
+    values: z.infer<typeof schemaCreateDirectionGeneralDp>
   ) => {
     startTransition(async () => {
       const response = await createDirectionGeneral(values);
@@ -117,7 +111,7 @@ export default function FormCreateDirectionDependency() {
     });
   };
   const onSubmitDirection = (
-    values: z.infer<typeof schemaCreateDirectionLineDirection>,
+    values: z.infer<typeof schemaCreateDirectionLineDirection>
   ) => {
     startTransition(async () => {
       const response = await createDirectionLine(values);
@@ -134,7 +128,7 @@ export default function FormCreateDirectionDependency() {
     });
   };
   const onSubmitCordination = (
-    values: z.infer<typeof schemaCreateCoordinationDirection>,
+    values: z.infer<typeof schemaCreateCoordinationDirection>
   ) => {
     startTransition(async () => {
       const response = await createDirectionCordination(values);
@@ -170,9 +164,15 @@ export default function FormCreateDirectionDependency() {
               <div className={"flex flex-col gap-2"}>
                 <div className={`grid grid-cols-2 w-full gap-4`}>
                   <div
-                    className={`space-y-2 ${(create === "create-coordination" || "create-direction-line") && ""}  ${create === "create-direction-general" && "col-span-2"}`}
+                    className={`space-y-2 ${
+                      (create === "create-coordination" ||
+                        "create-direction-line") &&
+                      ""
+                    }  ${
+                      create === "create-direction-general" && "col-span-2"
+                    }`}
                   >
-                    <Label>Dependencia</Label>
+                    <Label>Organización</Label>
                     <Select
                       onValueChange={(value) => {
                         setDependencyId(value);
@@ -181,12 +181,16 @@ export default function FormCreateDirectionDependency() {
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue
-                          placeholder={`${isLoadingDependency ? "Cargando Dependencias" : "Seleccionar Dependencias"}`}
+                          placeholder={`${
+                            isLoadingDependency
+                              ? "Cargando Organización"
+                              : "Seleccionar Organización"
+                          }`}
                         />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          <SelectLabel>Dependencias</SelectLabel>
+                          <SelectLabel>Organización</SelectLabel>
                           {dependency?.data.map((dp, i) => (
                             <SelectItem key={i} value={`${dp.id}`}>
                               {dp.Codigo}-{dp.dependencia}
@@ -198,7 +202,7 @@ export default function FormCreateDirectionDependency() {
                   </div>
                   {create === "create-direction-line" && (
                     <div className="space-y-2">
-                      <Label>Dirección General / Coordinación</Label>
+                      <Label>Dirección / Gerencia / Oficina</Label>
                       <Select
                         onValueChange={(value) => {
                           selectionDirectionGeneral(Number.parseInt(value));
@@ -206,12 +210,16 @@ export default function FormCreateDirectionDependency() {
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue
-                            placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccionar Dirección General"}`}
+                            placeholder={`${
+                              isLoadingDirectionGeneral
+                                ? "Cargando Direcciones"
+                                : "Seleccionar Dirección"
+                            }`}
                           />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectLabel>Direcciones De Generales </SelectLabel>
+                            <SelectLabel>Direcciones</SelectLabel>
                             {directionGeneral?.data.map((general, i) => (
                               <SelectItem key={i} value={`${general.id}`}>
                                 {general.Codigo}-{general.direccion_general}
@@ -225,7 +233,7 @@ export default function FormCreateDirectionDependency() {
                   {create === "create-coordination" && (
                     <>
                       <div className="space-y-2">
-                        <Label>Dirección General / Coordinación</Label>
+                        <Label>Dirección / Gerencia / Oficina</Label>
                         <Select
                           onValueChange={(value) => {
                             setSelectionDirectionGeneralId(value);
@@ -234,14 +242,16 @@ export default function FormCreateDirectionDependency() {
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue
-                              placeholder={`${isLoadingDirectionGeneral ? "Cargando Direcciones Generales" : "Seleccionar Dirección General"}`}
+                              placeholder={`${
+                                isLoadingDirectionGeneral
+                                  ? "Cargando Direcciones"
+                                  : "Seleccionar Dirección"
+                              }`}
                             />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>
-                                Direcciones De Generales / Coordinación
-                              </SelectLabel>
+                              <SelectLabel>Direcciones</SelectLabel>
                               {directionGeneral?.data.map((general, i) => (
                                 <SelectItem key={i} value={`${general.id}`}>
                                   {general.Codigo}-{general.direccion_general}
@@ -252,7 +262,7 @@ export default function FormCreateDirectionDependency() {
                         </Select>
                       </div>
                       <div className="space-y-2 col-span-2">
-                        <Label>Dirección De Linea / Coordinación</Label>
+                        <Label>División / Coordinación</Label>
 
                         <Select
                           onValueChange={(value) => {
@@ -261,14 +271,15 @@ export default function FormCreateDirectionDependency() {
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue
-                              placeholder={` ${isLoadingDirectionLine ? "Cargando Direcciones De Liena" : "Seleccionar Dirección De Linea"}`}
+                              placeholder={` ${
+                                isLoadingDirectionLine
+                                  ? "Cargando Direcciones"
+                                  : "Seleccionar Dirección"
+                              }`}
                             />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>
-                                Direcciones De Linea / Coordinaciones
-                              </SelectLabel>
                               {directionLine?.data.map((line, i) => (
                                 <SelectItem key={i} value={`${line.id}`}>
                                   {line.Codigo}-{line.direccion_linea}
@@ -294,7 +305,7 @@ export default function FormCreateDirectionDependency() {
                       id="r1"
                     />
                     <Label className="cursor-pointer" htmlFor="r1">
-                      Crear Dirección General / Coordinación
+                      Crear Dirección / Gerencia / Oficina
                     </Label>
                   </div>
                   <div className="flex items-center gap-3">
@@ -304,7 +315,7 @@ export default function FormCreateDirectionDependency() {
                       id="r2"
                     />
                     <Label className="cursor-pointer" htmlFor="r2">
-                      Crear Dirección De Linea / Coordinación
+                      Crear División / Coordinación
                     </Label>
                   </div>
                   <div className="flex items-center gap-3">
@@ -324,7 +335,7 @@ export default function FormCreateDirectionDependency() {
                   <Form {...formDirectionGeneral}>
                     <form
                       onSubmit={formDirectionGeneral.handleSubmit(
-                        onSubmitDirectionGeneral,
+                        onSubmitDirectionGeneral
                       )}
                       className="space-y-5"
                     >
@@ -335,7 +346,7 @@ export default function FormCreateDirectionDependency() {
                           render={({ field }) => (
                             <FormItem className="w-full truncate p-0.5">
                               <FormLabel>
-                                Codigo de la Dirección General / Coordinación
+                                Codigo de la Dirección / Gerencia / Oficina
                               </FormLabel>
                               <FormControl>
                                 <Input {...field} type="number" />
@@ -350,7 +361,7 @@ export default function FormCreateDirectionDependency() {
                           render={({ field }) => (
                             <FormItem className="w-full truncate p-0.5">
                               <FormLabel>
-                                Nombre De La Dirección General / Coordinación
+                                Nombre De La Dirección / Gerencia / Oficina
                               </FormLabel>
                               <FormControl>
                                 <Input {...field} />
@@ -360,9 +371,7 @@ export default function FormCreateDirectionDependency() {
                           )}
                         />
                       </div>
-                      <Button className="w-full">
-                        Crear Dirección General / Coordinación
-                      </Button>
+                      <Button className="w-full">Crear Dirección</Button>
                     </form>
                   </Form>
                 </div>
@@ -381,7 +390,7 @@ export default function FormCreateDirectionDependency() {
                           render={({ field }) => (
                             <FormItem className="w-full truncate p-0.5">
                               <FormLabel>
-                                Código De La Dirección De Linea / Coordinación
+                                Código De La División / Coordinación
                               </FormLabel>
                               <FormControl>
                                 <Input {...field} type="number" />
@@ -396,7 +405,7 @@ export default function FormCreateDirectionDependency() {
                           render={({ field }) => (
                             <FormItem className="w-full truncate p-0.5">
                               <FormLabel>
-                                Nombre De La Dirección De Linea / Coordinación
+                                Nombre De La División / Coordinación
                               </FormLabel>
                               <FormControl>
                                 <Input {...field} />
@@ -406,9 +415,7 @@ export default function FormCreateDirectionDependency() {
                           )}
                         />
                       </div>
-                      <Button className="w-full">
-                        Crear Dirección De Linea / Coordinación
-                      </Button>
+                      <Button className="w-full">Crear Dirección</Button>
                     </form>
                   </Form>
                 </div>
@@ -418,7 +425,7 @@ export default function FormCreateDirectionDependency() {
                   <Form {...formCordination}>
                     <form
                       onSubmit={formCordination.handleSubmit(
-                        onSubmitCordination,
+                        onSubmitCordination
                       )}
                       className="space-y-5"
                     >
@@ -450,7 +457,7 @@ export default function FormCreateDirectionDependency() {
                           )}
                         />
                       </div>
-                      <Button className="w-full">Crear Coordinación</Button>
+                      <Button className="w-full">Crear Dirección</Button>
                     </form>
                   </Form>
                 </div>
