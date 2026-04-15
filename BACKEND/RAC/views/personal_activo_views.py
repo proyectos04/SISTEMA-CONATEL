@@ -308,7 +308,7 @@ class ImportFullEmployeeDataView(APIView):
             df = pd.read_excel(archivo) if archivo.name.endswith(('.xlsx', '.xls')) else pd.read_csv(archivo)
             df.columns = df.columns.str.strip().str.lower()
             
-            # 2. Preparar Caché (Pre-carga de tablas maestras)
+            # 2. Preparar Caché (Pre-carga de tablas maestras para optimizar)
             def normalize(t):
                 if pd.isna(t) or not str(t).strip(): return ""
                 return " ".join(str(t).split()).upper()
@@ -329,12 +329,12 @@ class ImportFullEmployeeDataView(APIView):
                 
                 # Vivienda
                 'vivienda_cond': {normalize(obj.condicion): obj for obj in condicion_vivienda.objects.all()},
-                'estados': {normalize(obj.estado): obj for obj in direccion_models.Estado.objects.all()}, # Ajusta 'nombre' si tu campo se llama distinto
+                'estados': {normalize(obj.estado): obj for obj in direccion_models.Estado.objects.all()}, 
                 'municipios': {normalize(obj.municipio): obj for obj in direccion_models.Municipio.objects.all()},
                 'parroquias': {normalize(obj.parroquia): obj for obj in direccion_models.Parroquia.objects.all()},
                 
                 # Contactos
-                'parentescos': {normalize(obj.descripcion_parentesco): obj for obj in Parentesco.objects.all()}, # Ajusta al nombre real de tu campo en Parentesco
+                'parentescos': {normalize(obj.descripcion_parentesco): obj for obj in Parentesco.objects.all()}, 
                 
                 # M2M Salud
                 'alergias': {normalize(obj.alergia): obj for obj in Alergias.objects.all()},
@@ -353,9 +353,17 @@ class ImportFullEmployeeDataView(APIView):
                         linea = index + 2
                         try:
                             cedula = str(row.get('cedula', '')).split('.')[0].strip()
-                            if not cedula:
+                            if not cedula or cedula.lower() == 'nan':
                                 errores.append(f"Línea {linea}: Cédula vacía.")
                                 continue
+
+                            # --- FUNCIONES HELPER DINÁMICAS ---
+                            def has_val(col):
+                                """Verifica si la columna existe en el Excel Y no está vacía"""
+                                val = row.get(col)
+                                if pd.isna(val): return False
+                                val = str(val).strip()
+                                return val != "" and val.lower() != "nan"
 
                             def get_obj(cat, col):
                                 val = normalize(row.get(col))
@@ -363,25 +371,24 @@ class ImportFullEmployeeDataView(APIView):
 
                             def parse_date(col):
                                 val = row.get(col)
-                                if pd.isna(val) or val == "": return None
+                                if pd.isna(val) or str(val).strip() == "": return None
                                 try:
                                     return pd.to_datetime(val).date()
                                 except: return None
 
                             # --- 1. INFO BÁSICA (Employee) ---
-                            employee_data = {
-                                'nombres': normalize(row.get('nombres')),
-                                'apellidos': normalize(row.get('apellidos')),
-                                'fecha_nacimiento': parse_date('fecha_nacimiento'),
-                                'fechaingresoorganismo': parse_date('fecha_ingreso_organismo'),
-                                'correo': str(row.get('correo', '')).lower() if not pd.isna(row.get('correo')) else None,
-                                'telefono_movil': str(row.get('telefono_movil', '')),
-                                'telefono_habitacion': str(row.get('telefono_habitacion', '')),
-                                'profile': str(row.get('perfil_profesional', '')) if not pd.isna(row.get('perfil_profesional')) else None,
-                                'sexoid': get_obj('sexo', 'sexo'),
-                                'estadoCivil': get_obj('estado_civil', 'estado_civil'),
-                                'n_contrato': str(row.get('n_contrato', '')) if not pd.isna(row.get('n_contrato')) else None,
-                            }
+                            employee_data = {}
+                            if has_val('nombres'): employee_data['nombres'] = normalize(row.get('nombres'))
+                            if has_val('apellidos'): employee_data['apellidos'] = normalize(row.get('apellidos'))
+                            if has_val('fecha_nacimiento'): employee_data['fecha_nacimiento'] = parse_date('fecha_nacimiento')
+                            if has_val('fecha_ingreso_organismo'): employee_data['fechaingresoorganismo'] = parse_date('fecha_ingreso_organismo')
+                            if has_val('correo'): employee_data['correo'] = str(row.get('correo')).strip().lower()
+                            if has_val('telefono_movil'): employee_data['telefono_movil'] = str(row.get('telefono_movil')).strip()
+                            if has_val('telefono_habitacion'): employee_data['telefono_habitacion'] = str(row.get('telefono_habitacion')).strip()
+                            if has_val('perfil_profesional'): employee_data['profile'] = str(row.get('perfil_profesional')).strip()
+                            if has_val('sexo'): employee_data['sexoid'] = get_obj('sexo', 'sexo')
+                            if has_val('estado_civil'): employee_data['estadoCivil'] = get_obj('estado_civil', 'estado_civil')
+                            if has_val('n_contrato'): employee_data['n_contrato'] = str(row.get('n_contrato')).strip()
 
                             emp_instance, created = Employee.objects.update_or_create(
                                 cedulaidentidad=cedula,
@@ -393,88 +400,101 @@ class ImportFullEmployeeDataView(APIView):
                             else: actualizados += 1
 
                             # --- 2. DATOS DE VIVIENDA ---
-                            if normalize(row.get('direccion_exacta')):
-                                datos_vivienda.objects.update_or_create(
-                                    empleado_id=emp_instance,
-                                    defaults={
-                                        'estado_id': get_obj('estados', 'estado'),
-                                        'municipio_id': get_obj('municipios', 'municipio'),
-                                        'parroquia': get_obj('parroquias', 'parroquia'),
-                                        'direccion_exacta': row.get('direccion_exacta'),
-                                        'condicion_vivienda_id': get_obj('vivienda_cond', 'condicion_vivienda'),
-                                    }
-                                )
+                            vivienda_data = {}
+                            
+                            if has_val('estado'):
+                                estado_obj = get_obj('estados', 'estado')
+                                if not estado_obj: raise ValueError(f"El estado '{row.get('estado')}' no existe en la base de datos.")
+                                vivienda_data['estado_id'] = estado_obj
+
+                            if has_val('municipio'):
+                                municipio_obj = get_obj('municipios', 'municipio')
+                                if not municipio_obj: raise ValueError(f"El municipio '{row.get('municipio')}' no existe en la base de datos.")
+                                vivienda_data['municipio_id'] = municipio_obj
+
+                            if has_val('parroquia'):
+                                parroquia_obj = get_obj('parroquias', 'parroquia')
+                                if not parroquia_obj: raise ValueError(f"La parroquia '{row.get('parroquia')}' no existe en la base de datos.")
+                                vivienda_data['parroquia'] = parroquia_obj # Ojo: Cambia a 'parroquiaId' o 'parroquia_id' si tu modelo lo requiere
+
+                            if has_val('direccion_exacta'): vivienda_data['direccion_exacta'] = row.get('direccion_exacta')
+                            if has_val('condicion_vivienda'): vivienda_data['condicion_vivienda_id'] = get_obj('vivienda_cond', 'condicion_vivienda')
+
+                            if vivienda_data:
+                                datos_vivienda.objects.update_or_create(empleado_id=emp_instance, defaults=vivienda_data)
 
                             # --- 3. PERFIL FÍSICO ---
-                            perfil_fisico.objects.update_or_create(
-                                empleado_id=emp_instance,
-                                defaults={
-                                    'tallaCamisa': get_obj('talla_c', 'talla_camisa'),
-                                    'tallaPantalon': get_obj('talla_p', 'talla_pantalon'),
-                                    'tallaZapatos': get_obj('talla_z', 'talla_zapatos'),
-                                }
-                            )
+                            fisico_data = {}
+                            if has_val('talla_camisa'): fisico_data['tallaCamisa'] = get_obj('talla_c', 'talla_camisa')
+                            if has_val('talla_pantalon'): fisico_data['tallaPantalon'] = get_obj('talla_p', 'talla_pantalon')
+                            if has_val('talla_zapatos'): fisico_data['tallaZapatos'] = get_obj('talla_z', 'talla_zapatos')
+
+                            if fisico_data:
+                                perfil_fisico.objects.update_or_create(empleado_id=emp_instance, defaults=fisico_data)
 
                             # --- 4. FORMACIÓN ACADÉMICA ---
-                            if normalize(row.get('institucion_academica')):
-                                formacion_academica.objects.update_or_create(
-                                    empleado_id=emp_instance,
-                                    defaults={
-                                        'nivel_Academico_id': get_obj('niveles', 'nivel_academico'),
-                                        'carrera_id': get_obj('carreras', 'carrera'),
-                                        'mencion_id': get_obj('menciones', 'mencion'),
-                                        'institucion': normalize(row.get('institucion_academica')),
-                                        'capacitacion': normalize(row.get('capacitacion')),
-                                    }
-                                )
+                            formacion_data = {}
+                            if has_val('nivel_academico'): formacion_data['nivel_Academico_id'] = get_obj('niveles', 'nivel_academico')
+                            if has_val('carrera'): formacion_data['carrera_id'] = get_obj('carreras', 'carrera')
+                            if has_val('mencion'): formacion_data['mencion_id'] = get_obj('menciones', 'mencion')
+                            if has_val('institucion_academica'): formacion_data['institucion'] = normalize(row.get('institucion_academica'))
+                            if has_val('capacitacion'): formacion_data['capacitacion'] = normalize(row.get('capacitacion'))
+
+                            if formacion_data:
+                                formacion_academica.objects.update_or_create(empleado_id=emp_instance, defaults=formacion_data)
 
                             # --- 5. PERFIL DE SALUD ---
-                            salud_obj, _ = perfil_salud.objects.update_or_create(
-                                empleado_id=emp_instance,
-                                defaults={
-                                    'grupoSanguineo': get_obj('sangre', 'grupo_sanguineo'),
-                                }
-                            )
+                            salud_data = {}
+                            if has_val('grupo_sanguineo'): salud_data['grupoSanguineo'] = get_obj('sangre', 'grupo_sanguineo')
                             
-                            def sync_m2m(field_obj, cat, col_name):
-                                raw_val = row.get(col_name)
-                                if pd.isna(raw_val): return
-                                items = [normalize(x.strip()) for x in str(raw_val).split(',')]
-                                ids = [cache[cat][i].id for i in items if i in cache[cat]]
-                                field_obj.set(ids)
+                            has_m2m = has_val('alergias') or has_val('patologias') or has_val('discapacidades')
 
-                            sync_m2m(salud_obj.alergias, 'alergias', 'alergias')
-                            sync_m2m(salud_obj.patologiaCronica, 'patologias', 'patologias')
-                            sync_m2m(salud_obj.discapacidad, 'discapacidades', 'discapacidades')
+                            if salud_data or has_m2m:
+                                salud_obj, _ = perfil_salud.objects.update_or_create(empleado_id=emp_instance, defaults=salud_data)
+                                
+                                def sync_m2m(field_obj, cat, col_name):
+                                    items = [normalize(x.strip()) for x in str(row.get(col_name)).split(',')]
+                                    ids = [cache[cat][i].id for i in items if i in cache[cat]]
+                                    field_obj.set(ids)
+
+                                if has_val('alergias'): sync_m2m(salud_obj.alergias, 'alergias', 'alergias')
+                                if has_val('patologias'): sync_m2m(salud_obj.patologiaCronica, 'patologias', 'patologias')
+                                if has_val('discapacidades'): sync_m2m(salud_obj.discapacidad, 'discapacidades', 'discapacidades')
 
                             # --- 6. CONTACTO DE EMERGENCIA ---
-                            if normalize(row.get('contacto_nombres')) and normalize(row.get('contacto_apellidos')):
-                                # Usamos update_or_create usando nombres y apellidos como llaves
-                                # para evitar duplicar el mismo contacto si se corre el Excel 2 veces
+                            contacto_data = {}
+                            if has_val('contacto_telefono'): contacto_data['telefono'] = str(row.get('contacto_telefono', ''))
+                            if has_val('contacto_parentesco'): contacto_data['RelacionId'] = get_obj('parentescos', 'contacto_parentesco')
+
+                            if has_val('contacto_nombres') and has_val('contacto_apellidos'):
                                 contacto_emergencia.objects.update_or_create(
                                     empleado_id=emp_instance,
                                     nombres=normalize(row.get('contacto_nombres')),
                                     apellidos=normalize(row.get('contacto_apellidos')),
-                                    defaults={
-                                        'telefono': str(row.get('contacto_telefono', '')),
-                                        'RelacionId': get_obj('parentescos', 'contacto_parentesco')
-                                    }
+                                    defaults=contacto_data
                                 )
 
-                            # --- 7. ANTECEDENTES DE SERVICIO ---
-                            if normalize(row.get('ant_institucion')):
-                                antecedentes_servicio.objects.update_or_create(
-                                    empleado_id=emp_instance,
-                                    institucion=normalize(row.get('ant_institucion')),
-                                    defaults={
-                                        'fecha_ingreso': parse_date('ant_fecha_ingreso'),
-                                        'fecha_egreso': parse_date('ant_fecha_egreso')
-                                    }
-                                )
+                            # --- 7. ANTECEDENTES DE SERVICIO (Soporte Multi-Columnas) ---
+                            for i in range(1, 4):
+                                inst_col = f'ant_institucion_{i}'
+                                f_ingreso_col = f'ant_fecha_ingreso_{i}'
+                                f_egreso_col = f'ant_fecha_egreso_{i}'
+                                
+                                if has_val(inst_col):
+                                    ant_data = {}
+                                    if has_val(f_ingreso_col): ant_data['fecha_ingreso'] = parse_date(f_ingreso_col)
+                                    if has_val(f_egreso_col): ant_data['fecha_egreso'] = parse_date(f_egreso_col)
+                                    
+                                    antecedentes_servicio.objects.update_or_create(
+                                        empleado_id=emp_instance,
+                                        institucion=normalize(row.get(inst_col)),
+                                        defaults=ant_data
+                                    )
 
                         except Exception as e:
                             errores.append(f"Línea {linea}: {str(e)}")
 
+                    # Si hubo errores en CUALQUIER línea, se hace rollback de toda la transacción
                     if errores:
                         raise ValueError("Se detectaron errores de validación. Operación cancelada (Rollback).")
 
@@ -492,8 +512,6 @@ class ImportFullEmployeeDataView(APIView):
 
         except Exception as e:
             return Response({"error": f"Error crítico al procesar el archivo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 
 class ImportFullFamilyDataView(APIView):
