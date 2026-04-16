@@ -330,39 +330,65 @@ def _generate_employee_pdf(filtros):
 
 
 def _generate_family_activo_pdf(filtros):
-    """Genera el PDF de familiares."""
+    """Genera el PDF de familiares activos aplicando Prefetch."""
     Employee = apps.get_model('RAC', 'Employee')
+    # IMPORTANTE: Asegúrate de que el nombre del modelo de carga familiar sea el correcto
+    CargaFamiliar = apps.get_model('RAC', 'Employeefamily') 
     
-    # Obtener empleados con sus familiares
+    config = MAPA_REPORTES.get('familiares', {})
+    filtros_permitidos = config.get('filtros_permitidos', {})
+
+    # 1. Separar los filtros dinámicamente
+    filtros_empleado = {}
+    filtros_familiar = {}
+    
+    for filtro_key, filtro_value in filtros.items():
+        if filtro_value is not None and filtro_key in filtros_permitidos:
+            campo_db = filtros_permitidos[filtro_key]
+            
+            if campo_db.startswith('carga_familiar__'):
+                # Le quitamos el prefijo para poder usarlo directo en el modelo CargaFamiliar
+                campo_limpio = campo_db.replace('carga_familiar__', '')
+                filtros_familiar[campo_limpio] = filtro_value
+            else:
+                filtros_empleado[campo_db] = filtro_value
+
+    # 2. Crear el QuerySet para los familiares (esto filtrará lo que se muestra en el PDF)
+    familiares_qs = CargaFamiliar.objects.select_related(
+        'parentesco', 
+        'sexo', 
+        'estadoCivil'
+    )
+    if filtros_familiar:
+        familiares_qs = familiares_qs.filter(**filtros_familiar)
+
+    # 3. Construir la consulta principal de Empleados
     queryset = Employee.objects.select_related(
         'sexoid',
         'estadoCivil'
     ).prefetch_related(
-        'carga_familiar',
-        'carga_familiar__parentesco',
-        'carga_familiar__sexo',
-        'carga_familiar__estadoCivil',
+        Prefetch('carga_familiar', queryset=familiares_qs),
         'assignments',
         'assignments__Dependencia',
         'assignments__DireccionGeneral',
         'assignments__DireccionLinea',
         'assignments__Coordinacion'
-        
     ).filter(
         carga_familiar__isnull=False,
-        assignments__Tipo_personal__tipo_personal= PERSONAL_ACTIVO
-    ).distinct()
+        assignments__Tipo_personal__tipo_personal=PERSONAL_ACTIVO
+    )
     
-    # Aplicar filtros
-    config = MAPA_REPORTES.get('familiares', {})
-    filtros_permitidos = config.get('filtros_permitidos', {})
-    
-    for filtro_key, filtro_value in filtros.items():
-        if filtro_value is not None and filtro_key in filtros_permitidos:
-            campo_db = filtros_permitidos[filtro_key]
-            queryset = queryset.filter(**{campo_db: filtro_value})
-    
-    queryset = queryset.order_by('apellidos', 'nombres')
+    # 4. Aplicar los filtros de nivel Empleado (Dependencia, nómina, vivienda, etc.)
+    if filtros_empleado:
+        queryset = queryset.filter(**filtros_empleado)
+        
+    # 5. Aplicar los filtros familiares al Empleado (para no traer empleados que no tengan hijos, etc.)
+    # Volvemos a armar el diccionario original solo para los familiares
+    if filtros_familiar:
+        filtros_para_empleado = {f"carga_familiar__{k}": v for k, v in filtros_familiar.items()}
+        queryset = queryset.filter(**filtros_para_empleado)
+
+    queryset = queryset.distinct().order_by('apellidos', 'nombres')
     
     generator = FamilyPDFGenerator(
         employees=queryset,
@@ -371,7 +397,6 @@ def _generate_family_activo_pdf(filtros):
     )
     
     return generator.get_response(as_attachment=True)
-
 
 def _generate_assignment_pdf(filtros):
     AsigTrabajo = apps.get_model('RAC', 'AsigTrabajo')
