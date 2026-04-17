@@ -36,12 +36,12 @@ class EmployeeMovementHistory(models.Model):
     denominacioncargo = models.ForeignKey(Denominacioncargo, on_delete=models.PROTECT)
     denominacioncargoespecifico = models.ForeignKey(Denominacioncargoespecifico, on_delete=models.PROTECT)
     gradoid = models.ForeignKey(Grado, on_delete=models.PROTECT, null=True)
-    tiponomina = models.ForeignKey(Tiponomina, on_delete=models.PROTECT)
+    tiponomina = models.ForeignKey(Tiponomina,db_column='tipoNominaId' ,on_delete=models.PROTECT)
     estatus = models.ForeignKey(Estatus, on_delete=models.PROTECT)
     tipo_personal = models.ForeignKey(Tipo_personal, on_delete=models.PROTECT)
     Nivel = models.ForeignKey(Niveles, db_column='NivelId',  on_delete=models.PROTECT, null=True)
     Direccion= models.ForeignKey(Direcciones,db_column='direccionId', on_delete=models.PROTECT, null=True)
-    DireccionLineaid = models.ForeignKey(DireccionLinea, on_delete=models.PROTECT, null=True)
+    Division = models.ForeignKey(Divisiones, db_column="DivisionId",on_delete=models.PROTECT, null=True)
     Coordinacionid = models.ForeignKey(Coordinaciones, on_delete=models.PROTECT, null=True)
 
     # Datos del Movimiento
@@ -99,7 +99,7 @@ class CargoEgresado(models.Model):
     TipoPersonalId = models.ForeignKey(Tipo_personal, models.DO_NOTHING, db_column='tipoPersonalId')
     Nivel = models.ForeignKey(Niveles,  models.DO_NOTHING, db_column='NivelId',)
     Direccion= models.ForeignKey(Direcciones,models.DO_NOTHING, db_column='direccionId', null=True)
-    DireccionLinea = models.ForeignKey(DireccionLinea, models.DO_NOTHING, db_column='direccionLineaId', null=True)
+    Division = models.ForeignKey(Divisiones, models.DO_NOTHING, db_column='DivisionId', null=True)
     Coordinacion = models.ForeignKey(Coordinaciones, models.DO_NOTHING, db_column='coordinacionId', null=True)
     OrganismoAdscritoid = models.ForeignKey(OrganismoAdscrito, models.DO_NOTHING, db_column='organismoAdscritoId', null=True)
 

@@ -332,7 +332,7 @@ class DireccionGeneralSerializer(serializers.ModelSerializer):
         return value
 class DireccionLineaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DireccionLinea
+        model = Divisiones
         fields = '__all__' 
     
         extra_kwargs = {
